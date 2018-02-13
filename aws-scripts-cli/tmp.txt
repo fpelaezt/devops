@@ -1,0 +1,7 @@
+exist=$(aws ec2 describe-vpcs --filters Name=tag-value,Values=DevOps01 --output text --query 'Vpcs[*].State')
+echo $exist
+if [ ! -z "$exist" ]; then
+    echo "VPC DevOps01 already exists, aborting creation..."
+	exit
+fi
+echo "VPC ya existe"
