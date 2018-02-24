@@ -1,6 +1,7 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
-Description: This template create a VPC + Public Subnet + IGW
+Description: This template create a VPC + 2 Public Subnet in differents AZ + 2 Private SubnetIGW in differents AZ + 1 PublicRoute + 1 PrivateRoute 
+ + their corresponding SubnetRouteTableAssociation
 
 Parameters:
   Environment:
@@ -35,6 +36,30 @@ Parameters:
     MaxLength: 18
     AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
     ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x
+  PublicSubnet2CIDR:
+    Description: Define CIDR for PublicSubnet2
+    Type: String
+    Default: 10.0.1.0/24
+    MinLength: 9
+    MaxLength: 18
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x
+  PrivateSubnet1CIDR:
+    Description: Define CIDR for PublicSubnet2
+    Type: String
+    Default: 10.0.10.0/24
+    MinLength: 9
+    MaxLength: 18
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x
+  PrivateSubnet2CIDR:
+    Description: Define CIDR for PublicSubnet2
+    Type: String
+    Default: 10.0.11.0/24
+    MinLength: 9
+    MaxLength: 18
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x
 
 Resources:
   myVPC:
@@ -56,11 +81,81 @@ Resources:
     Properties:
       AvailabilityZone: !Select [ 0, !GetAZs ''] #Comment: Get first AZ
       CidrBlock: !Ref PublicSubnet1CIDR
+      MapPublicIpOnLaunch: false
       Tags:
       -
         Key: Name
         Value: !Sub ${Environment} PublicSubnet1 AZ1 #Comment: Substitutes parameter inside ${}
       VpcId: !Ref myVPC
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [ 1, !GetAZs ''] #Comment: Get second AZ
+      CidrBlock: !Ref PublicSubnet2CIDR
+      MapPublicIpOnLaunch: false
+      Tags:
+      -
+        Key: Name
+        Value: !Sub ${Environment} PublicSubnet1 AZ2
+      VpcId: !Ref myVPC
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [ 0, !GetAZs '']
+      CidrBlock: !Ref PrivateSubnet1CIDR
+      MapPublicIpOnLaunch: false
+      Tags:
+      -
+        Key: Name
+        Value: !Sub ${Environment} PrivateSubnet1 AZ1
+      VpcId: !Ref myVPC
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [ 1, !GetAZs '']
+      CidrBlock: !Ref PrivateSubnet2CIDR
+      MapPublicIpOnLaunch: false
+      Tags:
+      -
+        Key: Name
+        Value: !Sub ${Environment} PrivateSubnet2 AZ2
+      VpcId: !Ref myVPC
+  PublicRoute:
+    Type: AWS::EC2::RouteTable
+    Properties: 
+      VpcId: !Ref myVPC
+      Tags:
+      -
+        Key: Name
+        Value: !Sub ${Environment} PublicRoute
+  PrivateRoute:
+    Type: AWS::EC2::RouteTable
+    Properties: 
+      VpcId: !Ref myVPC
+      Tags:
+      -
+        Key: Name
+        Value: !Sub ${Environment} PrivateRoute
+  Public1RouteSubnetAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId: !Ref PublicRoute
+      SubnetId: !Ref PublicSubnet1
+  Public2RouteSubnetAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId: !Ref PublicRoute
+      SubnetId: !Ref PublicSubnet2
+  Private1RouteSubnetAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId: !Ref PrivateRoute
+      SubnetId: !Ref PrivateSubnet1
+  Private2RouteSubnetAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId: !Ref PrivateRoute
+      SubnetId: !Ref PrivateSubnet2
   IGW:
     Type: AWS::EC2::InternetGateway
     Properties:
@@ -69,10 +164,18 @@ Resources:
         Key: Name
         Value: !Sub ${Environment} IGW
   IGWAttachment:
-    Type: "AWS::EC2::VPCGatewayAttachment"
+    Type: AWS::EC2::VPCGatewayAttachment
     Properties: 
       InternetGatewayId: !Ref IGW
       VpcId: !Ref myVPC
+  Route2IGW:
+    Type: AWS::EC2::Route
+    DependsOn: IGWAttachment
+    Properties: 
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref IGW
+      RouteTableId: !Ref PublicRoute
+      
 
 Outputs:
   VPCID: 
