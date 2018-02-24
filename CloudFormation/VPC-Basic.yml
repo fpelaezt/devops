@@ -1,11 +1,12 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
-Description: This template create a VPC called DevOps1 with CIDR 10.0.0.0/24
+Description: This template create a VPC + Public Subnet + IGW
 
 Parameters:
   Environment:
     Description: Define the Environment
     Type: String
+    Default: Development
     AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*"
     MinLength: 5
     MaxLength: 12
@@ -13,6 +14,7 @@ Parameters:
   VPCName:
     Description: Define the VPCName
     Type: String
+    Default: DevOps01
     AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*"
     MinLength: 5
     MaxLength: 12
@@ -52,13 +54,25 @@ Resources:
   PublicSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: !Select [ 0, !GetAZs '']
+      AvailabilityZone: !Select [ 0, !GetAZs ''] #Comment: Get first AZ
       CidrBlock: !Ref PublicSubnet1CIDR
       Tags:
       -
         Key: Name
-        Value: !Sub ${Environment} PublicSubnet1 AZ1
-      VpcId: !Ref myVPC 
+        Value: !Sub ${Environment} PublicSubnet1 AZ1 #Comment: Substitutes parameter inside ${}
+      VpcId: !Ref myVPC
+  IGW:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+      -
+        Key: Name
+        Value: !Sub ${Environment} IGW
+  IGWAttachment:
+    Type: "AWS::EC2::VPCGatewayAttachment"
+    Properties: 
+      InternetGatewayId: !Ref IGW
+      VpcId: !Ref myVPC
 
 Outputs:
   VPCID: 
@@ -66,4 +80,10 @@ Outputs:
     Value: !Ref myVPC
   VPCCIDR:
     Description: CIDR of the VPC
-    Value: !GetAtt myVPC.CidrBlock 
+    Value: !GetAtt myVPC.CidrBlock #Comment: Get attribute
+  PublicSubnet1ID:
+    Description: AZ of the PublicSubnet1
+    Value: !GetAtt PublicSubnet1.AvailabilityZone
+  IGWID: 
+    Description: A reference to the IGW
+    Value: !Ref IGW
