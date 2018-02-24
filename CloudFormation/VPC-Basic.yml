@@ -17,10 +17,18 @@ Parameters:
     MinLength: 5
     MaxLength: 12
     ConstraintDescription: Name must start with a letter and followed by any letter or number, minimum lenght 5 and maximun lenght 12
-  CIDR:
+  VPCCIDR:
     Description: Define CIDR
     Type: String
     Default: 10.0.0.0/16
+    MinLength: 9
+    MaxLength: 18
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x
+  PublicSubnet1CIDR:
+    Description: Define CIDR for PublicSubnet1
+    Type: String
+    Default: 10.0.0.0/24
     MinLength: 9
     MaxLength: 18
     AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
@@ -30,7 +38,7 @@ Resources:
   myVPC:
     Type: AWS::EC2::VPC
     Properties: 
-      CidrBlock: !Ref CIDR
+      CidrBlock: !Ref VPCCIDR
       EnableDnsSupport: true
       EnableDnsHostnames: true
       InstanceTenancy: default
@@ -41,11 +49,21 @@ Resources:
       - 
         Key: Environment
         Value: !Ref Environment
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [ 0, !GetAZs '']
+      CidrBlock: !Ref PublicSubnet1CIDR
+      Tags:
+      -
+        Key: Name
+        Value: !Sub ${Environment} PublicSubnet1 AZ1
+      VpcId: !Ref myVPC 
 
 Outputs:
-  myVPC: 
+  VPCID: 
     Description: A reference to the created VPC
     Value: !Ref myVPC
-  CIDR:
+  VPCCIDR:
     Description: CIDR of the VPC
     Value: !GetAtt myVPC.CidrBlock 
