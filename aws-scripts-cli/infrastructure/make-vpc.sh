@@ -8,7 +8,7 @@ where="${where: -3}"
 if test "$where" = "cli"; then
  echo "Running from correct directory"
 else
- echo "Must be run from aws-scripts-cli  directory with ./infraestructure/make-vpc.sh"
+ echo "Must be run from aws-scripts-cli directory with ./infraestructure/make-vpc.sh"
  exit
 fi
 

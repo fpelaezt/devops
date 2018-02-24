@@ -12,7 +12,7 @@ where="${where: -3}"
 if test "$where" = "cli"; then
  echo "Running from correct directory"
 else
- echo "Must be run from aws directory with ./master/make-instances.sh"
+ echo "Must be run from aws-scripts-cli directory with ./master/make-instances.sh"
  exit
 fi
 

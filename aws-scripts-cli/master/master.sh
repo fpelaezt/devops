@@ -17,9 +17,12 @@ fi
 # include global variables
 . ./master/vars.sh
 
+# make passwords
+./credentials/makepasswords.sh
+
 # order below is crucial
 #echo $'\n\n*********************\n MAKING VPC\n*********************\n\n'
-. ./infrastructure/make-vpc.sh
+#. ./infrastructure/make-vpc.sh
 #echo $'\n\n*********************\n MADE VPC\n*********************\n\n'
 
 #for (( i=1; i<=$numservers; i++ )) do
