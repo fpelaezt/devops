@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
 Description: This template create a VPC + 2 Public Subnet in differents AZ + 2 Private SubnetIGW in differents AZ + 1 PublicRoute + 1 PrivateRoute 
- + their corresponding SubnetRouteTableAssociation
+ + their corresponding SubnetRouteTableAssociation + 2 NatGateway + ExportParameters
 
 Parameters:
   Environment:
@@ -81,7 +81,7 @@ Resources:
     Properties:
       AvailabilityZone: !Select [ 0, !GetAZs ''] #Comment: Get first AZ
       CidrBlock: !Ref PublicSubnet1CIDR
-      MapPublicIpOnLaunch: false
+      MapPublicIpOnLaunch: true
       Tags:
       -
         Key: Name
@@ -92,7 +92,7 @@ Resources:
     Properties:
       AvailabilityZone: !Select [ 1, !GetAZs ''] #Comment: Get second AZ
       CidrBlock: !Ref PublicSubnet2CIDR
-      MapPublicIpOnLaunch: false
+      MapPublicIpOnLaunch: true
       Tags:
       -
         Key: Name
@@ -128,14 +128,22 @@ Resources:
       -
         Key: Name
         Value: !Sub ${Environment} PublicRoute
-  PrivateRoute:
+  Private1Route:
     Type: AWS::EC2::RouteTable
     Properties: 
       VpcId: !Ref myVPC
       Tags:
       -
         Key: Name
-        Value: !Sub ${Environment} PrivateRoute
+        Value: !Sub ${Environment} Private1Route
+  Private2Route:
+    Type: AWS::EC2::RouteTable
+    Properties: 
+      VpcId: !Ref myVPC
+      Tags:
+      -
+        Key: Name
+        Value: !Sub ${Environment} Private2Route
   Public1RouteSubnetAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties: 
@@ -149,12 +157,12 @@ Resources:
   Private1RouteSubnetAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties: 
-      RouteTableId: !Ref PrivateRoute
+      RouteTableId: !Ref Private1Route
       SubnetId: !Ref PrivateSubnet1
   Private2RouteSubnetAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties: 
-      RouteTableId: !Ref PrivateRoute
+      RouteTableId: !Ref Private2Route
       SubnetId: !Ref PrivateSubnet2
   IGW:
     Type: AWS::EC2::InternetGateway
@@ -168,6 +176,32 @@ Resources:
     Properties: 
       InternetGatewayId: !Ref IGW
       VpcId: !Ref myVPC
+  NATGWPublic1:
+    Type: AWS::EC2::NatGateway
+    Properties: 
+      AllocationId: !GetAtt EIPNATGW1.AllocationId
+      SubnetId: !Ref PrivateSubnet1
+      Tags: 
+      -
+        Key: Name
+        Value: !Sub ${Environment} NATGWPublic1
+  NATGWPublic2:
+    Type: AWS::EC2::NatGateway
+    Properties: 
+      AllocationId: !GetAtt EIPNATGW2.AllocationId
+      SubnetId: !Ref PrivateSubnet2
+      Tags: 
+      -
+        Key: Name
+        Value: !Sub ${Environment} NATGWPublic2
+  EIPNATGW1:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+  EIPNATGW2:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
   Route2IGW:
     Type: AWS::EC2::Route
     DependsOn: IGWAttachment
@@ -175,18 +209,39 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref IGW
       RouteTableId: !Ref PublicRoute
-      
+  Route2NATGW1:
+    Type: AWS::EC2::Route
+    Properties: 
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NATGWPublic1
+      RouteTableId: !Ref Private1Route
+  Route2NATGW2:
+    Type: AWS::EC2::Route
+    Properties: 
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NATGWPublic2
+      RouteTableId: !Ref Private2Route
+
 
 Outputs:
   VPCID: 
     Description: A reference to the created VPC
     Value: !Ref myVPC
+    Export:
+      Name: !Sub ${AWS::StackName}-VPCID
   VPCCIDR:
     Description: CIDR of the VPC
     Value: !GetAtt myVPC.CidrBlock #Comment: Get attribute
-  PublicSubnet1ID:
+  AZPublicSubnet1:
     Description: AZ of the PublicSubnet1
     Value: !GetAtt PublicSubnet1.AvailabilityZone
+    Export:
+      Name: !Sub ${AWS::StackName}-AZPublicSubnet1
+  PublicSubnet1:
+    Description: SubnetId of PublicSubnet1
+    Value: !Ref PublicSubnet1
+    Export:
+      Name: !Sub ${AWS::StackName}-PublicSubnet1
   IGWID: 
     Description: A reference to the IGW
     Value: !Ref IGW

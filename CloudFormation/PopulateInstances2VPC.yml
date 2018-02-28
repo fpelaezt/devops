@@ -1,0 +1,74 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: This template populate several intances into an already created VPC
+
+Parameters:
+  Environment:
+    Description: Define the Environment
+    Type: String
+    Default: Development
+    AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*"
+    MinLength: 5
+    MaxLength: 12
+    ConstraintDescription: Name must start with a letter and followed by any letter or number, minimum lenght 5 and maximun lenght 12
+  VPCName:
+    Description: Define the VPCName
+    Type: String
+    Default: DevOps01
+    AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*"
+    MinLength: 5
+    MaxLength: 12
+    ConstraintDescription: Name must start with a letter and followed by any letter or number, minimum lenght 5 and maximun lenght 12
+  NetworkStackName:
+    Description: Name of an active CloudFormation stack that contains the networking resources
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedPattern: "[a-zA-Z][-a-zA-Z0-9]*"
+    Default: "MyFirstVPC"
+
+Resources:
+  EC2Instance1PublicSubnet:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone:
+        Fn::ImportValue:
+          !Sub ${NetworkStackName}-AZPublicSubnet1
+      ImageId: ami-864ce7fe
+      InstanceType: t2.micro
+      KeyName: DevOps01
+      Monitoring: false
+      SecurityGroupIds:
+      -
+        !Ref SGPublic
+      SubnetId:
+        Fn::ImportValue:
+          !Sub ${NetworkStackName}-PublicSubnet1
+      Tags: 
+      -
+        Key: Name
+        Value: !Sub ${Environment} Instance AZPublicSubnet1
+  SGPublic:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH access via port 22
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId:
+        Fn::ImportValue:
+          !Sub ${NetworkStackName}-VPCID
+      Tags: 
+      -
+        Key: Name
+        Value: !Sub ${Environment} SecurityGroup Public Allow SSH
+
+Outputs:
+  InstancePublicDNS: 
+    Description: DNS to Instance
+    Value: !GetAtt EC2Instance1PublicSubnet.PublicDnsName
+  InstancePublicIP: 
+    Description: IP Instance
+    Value: !GetAtt EC2Instance1PublicSubnet.PublicIp
