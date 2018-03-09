@@ -30,6 +30,12 @@ Parameters:
 Resources:
   EC2Instance1PublicSubnet:
     Type: AWS::EC2::Instance
+    Metadata: 
+      AWS::CloudFormation::Init: 
+        config: 
+          packages: 
+            yum:
+              httpd: []
     Properties:
       AvailabilityZone:
         Fn::ImportValue:
