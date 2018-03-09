@@ -10,3 +10,8 @@ name5 = "\tSecond Line\tTabulator"
 
 print(name4)
 print(name5)
+
+name6 = "    Este cadena tiene espacios adelante y atras "
+print(name6)
+name6 = name6.strip()
+print(name6)
