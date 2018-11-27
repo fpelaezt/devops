@@ -1,6 +1,3 @@
-##########
-# Author: fpelaezt
-# Based on: AWS Scripted book
-# Creation date: 2018-01-12
-#
-##########
+# Python Crash Course
+Page 28
+Naming and Using Variables

@@ -19,3 +19,6 @@ badname = " fernando "
 print("Delete right space: " + badname.rstrip())
 print("Delete left space: " + badname.lstrip())
 print("Delete both spaces: " + badname.strip())
+
+message = "Albert Einstein said\n\t'World is great\n\tenjoy it!!!'\nvery smart guy"
+print(message)
