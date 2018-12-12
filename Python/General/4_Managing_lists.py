@@ -57,9 +57,13 @@ players = ['charles', 'martina', 'michael', 'florence', 'eli']
 print(players[0:1])
 print(players[:2])
 print(players[2:])
+print("Last two elements")
+print(players[-2:])
 
 my_foods = ['pizza', 'falafel', 'carrot cake']
 friend_foods = my_foods[:]
+my_foods.append('cannoli')
+friend_foods.append('ice cream')
 print("My favorite foods are:")
 print(my_foods)
 print("\nMy friend's favorite foods are:")
