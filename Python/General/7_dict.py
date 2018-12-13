@@ -20,6 +20,8 @@ user_0 = {
     'first': 'enrico',
     'last': 'fermi',
     }
+
+#Looping trough all key-value pairs
 for key, value in user_0.items():
     print("\nKey: " + key)
     print("Value: " + value)
@@ -31,28 +33,36 @@ favorite_languages = {
     'edward': 'ruby',
     'phil': 'python',
     }
+
+print("\nLoop items")
 for name, language in favorite_languages.items():
     print(name.title() + "'s favorite language is " +
             language.title() + ".")
-print("############")
+
+print("\nLoop keys")
 for name in favorite_languages.keys():
     print(name.title())
-print("############")
+
+print("\nLoop values")
 for language in favorite_languages.values():
     print(language.title())
-print("############")
-#Printing non repetitive
+
+print("\nLoop in sorted keys")
+for name in sorted(favorite_languages.keys()):
+    print(name.title() + ", thank you for taking the poll.")
+
+print("\nNon repetitive")
 for language in set(favorite_languages.values()):
     print(language.title())
 
 
 print("############")
+print("\nNesting")
 print("############")
-print("############")
-
 alien_0 = {'color': 'green', 'points': 5}
 alien_1 = {'color': 'yellow', 'points': 10}
 alien_2 = {'color': 'red', 'points': 15}
+
 aliens = [alien_0, alien_1, alien_2]
 for alien in aliens:
     print(alien)
