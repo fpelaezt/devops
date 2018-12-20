@@ -3,5 +3,5 @@ import boto3
 s3 = boto3.resource('s3')
 
 # Upload a new file
-data = open('test-python.jpeg', 'rb')
-s3.Bucket('mynewbucket.fpelaezt.me').put_object(Key='test-python.jpeg', Body=data)
+data = open('s3-object.txt', 'rb')
+s3.Bucket('fpelaezt-devops-bucket1').put_object(Key='s3-object.txt', Body=data)
