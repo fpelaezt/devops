@@ -41,5 +41,6 @@ aws s3 rb s3://fpelaezt-devops-bucket2                          | remove empty b
 # EC2
 #######
 
-aws ec2 run-instances --dry-run --image-id \                    | Test if command succeds
-ami-0af6d461cf36733d2 --instance-type t2.micro
+aws ec2 run-instances --dry-run --image-id \
+ami-0af6d461cf36733d2 --instance-type t2.micro                  | Test if command succeds
+aws ec2 describe-instances --output table > aws.log
