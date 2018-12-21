@@ -24,15 +24,15 @@ aws sts decode-authorization-message -encoded-message <value>   | Decode error m
     echo <decode>
     Format into JSON using VSCode
 
-
-
 #######
 # S3
 #######
 
 aws s3 ls                                                       | list buckets
 aws s3 ls s3://fpelaezt-devops-bucket1                          | list files inside a bucket
-aws s3 cp s3://fpelaezt-devops-bucket1/Barbados_reply.png .     | Download a file
+aws s3 cp file.txt s3://fpelaezt-devops-bucket1/file.txt        | Upload a file
+aws s3 cp s3://fpelaezt-devops-bucket1/file.txt .               | Download a file
+aws s3 rm s3://fpelaezt-devops-bucket1/test2.txt                | Remove a file
 aws s3 cp help
 aws s3 mb s3://fpelaezt-devops-bucket2                          | make bucket
 aws s3 rb s3://fpelaezt-devops-bucket2                          | remove empty bucket
