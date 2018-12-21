@@ -16,3 +16,4 @@ s3.Bucket('fpelaezt-devops-bucket2').delete_objects(Delete={
                                                             'Quiet': False
                                                         },
                                                     )
+                                                    
