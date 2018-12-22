@@ -40,3 +40,27 @@ def build_person(first_name, last_name, age=''):
     return person
 musician = build_person('jimi', 'hendrix', age=27)
 print(musician)
+
+# Arbitrary arguments. Convert into tuple
+def make_pizza(*toppings):
+    """Summarize the pizza we are about to make."""
+    print("\nMaking a pizza with the following toppings:")
+    for topping in toppings:
+        print("- " + topping)
+make_pizza('pepperoni')
+make_pizza('mushrooms', 'green peppers', 'extra cheese')
+
+
+# Arbitrary keyworkd arguments. Create an empty dictionary
+def build_profile(first, last, **user_info):
+    """Build a dictionary containing everything we know about a user."""
+    profile = {}
+    profile['first_name'] = first
+    profile['last_name'] = last
+    for key, value in user_info.items():
+        profile[key] = value
+    return profile
+user_profile = build_profile('albert', 'einstein',
+location='princeton',
+field='physics')
+print(user_profile)
