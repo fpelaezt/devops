@@ -246,3 +246,79 @@
 * Rollback
   * Default: everything rolls back (gets deleted). Can be disabled
   * If stack update fails, it rolls back to the previous state. Can be disabled
+
+## Monitoring
+
+### AWS CloudWatch
+
+* Metric: Collect and track
+  * Variable (CPUUtilization, NetworkIn, etc)
+  * Belong to namespaces
+  * Dimensions is an attribute of a metric (instance id, environment, etc)
+  * Up to 10 Dimensions per metric
+  * Have timestamps
+  * Can create dashboards
+  * EC2
+    * Default: every 5 minutes
+    * Detailed monitoring: every minute
+    * To have EC2 Memory have to use a Custom Metric
+  * Custom Metrics
+    * Standard: 1 minute
+    * High Resolution: 1 second - higher cost (APICall StorageResolution)
+    * Use API PutMetricData to send a custom metric
+    * Use exponential back off
+* Logs
+  * Collect and analyze
+  * Send to S3 for archival
+  * Send to ElasticSearch for analytics
+  * Storage architecture
+    * Log group --> Log stream
+  * Log expiration policy
+  * To send logs, make sure IAM permissions are correct
+  * Encryted can be set to logs at rest using KMS at Group Level
+  * Policy expiration should be set at Group Level
+* Events
+  * Send notifications
+  * Schedule or Event Pattern
+  * Creates an small JSON with information about the event
+* Alarms
+  * React in real-time
+  * Options: sampling, %, max, min, etc
+  * Status
+    * OK
+    * INSUFFICIENT_DATA
+    * ALARM
+  * Period
+    * High resolution period to trigger [10sec -30sec]
+
+### AWS X-Ray
+
+* Troubleshoot performances (bottlenecks)
+* Tracing microservices and dependencies
+* Review behaviors
+* Identify affected users
+* Compatible
+  * Lambda, Beanstalk, ECS, ECL, API Gateway, EC2, OnPremise
+* Leverages on Tracing
+  * Annotation can be added to traces to provide extra-info
+* Scope
+  * Every request
+  * Sample request (% or Rate per Minite)
+* Security
+  * IAM for authorization
+  * KMS for encryption at rest
+* Enable on EC2
+  * Code (JAVA, Python, Go, Node.js, .NET) must import X-Ray SDK
+    * Capture Call to AWS services, HTTPS/HTTPS, Database Calls, SQS
+  * Install X-Ray deamon or enable X-Ray AWS Integration
+  * Low level IDP packet interceptor
+  * Each app must have the IAM rights to write data to X-Ray
+* Enable on Lambda
+  * Uses an IAM Role with policy AWSX-RayWriteOnlyAccess
+* Enable on Elastic Beanstalk
+  * Create an xray-deamon.config in the .ebextensions folder
+
+### AWS CloudTrail
+
+* Audit API calls
+* If a resource is deleted, look into CloudTrail first
