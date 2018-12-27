@@ -7,6 +7,7 @@
 * [Amazon Instance types](https://aws.amazon.com/es/ec2/instance-types/)
 * [Amazon Instances review](https://ec2instances.info/)
 * Meta-Data: http://169.254.169.254/latest/meta-data/
+* [Montly Calculator](https://calculator.s3.amazonaws.com/index.html)
 
 ## RDS
 
@@ -122,7 +123,6 @@
   * S3 Bucket Artifacts + Logs (CloudWatch - S3)
 * Troubleshoot
   * Run CodeBuild on your laptop using Docker and [CodeBuild Agent](https://docs.aws.amazon.com/codebuild/latest/userguide/use-codebuild-agent.html)
-
 * buildspec.yml
   * Must be in the root folder
   * Define environment variables (plaintext or Secure secrets with SSM Parameter store)
@@ -146,7 +146,6 @@
 * Support Blue/Green deployment on EC2 servers
 * Support AWS Lambda deployments
 * Don't provision resources
-
 * Components
   * Application: unique name
   * Compute platform: EC2/On-Premise or Lambda
@@ -157,7 +156,6 @@
   * Application Revision: Code + appspec.yml
   * Service Role: Role for CodeDeploy to perform actions
   * Target Revision: Application version
-
 * appspec.yml
   * Must be in the root folder
   * Sections
@@ -171,7 +169,6 @@
         * AfterInstall
         * ApplicationStart
         * __ValidateService__
-
 * Deployment Config In-Place
   * One a time
   * Half at a time
@@ -185,3 +182,67 @@
   * Set of tagged EC2 instances
   * Directly to an ASG
   * Mix (Tag/ASG)
+
+## CloudFormation
+
+* Infrastructure as code
+* Separation of concern
+  * VPN stacks
+  * Network stacks
+  * App stacks
+* To update Re-upload the new version
+* Deploy
+  * Manual: Edit using CloudFormation Designer or by console
+  * Automatic: Edit YAML file and CLI
+* Blocks
+  * Resources (Mandatory)
+  * Parameters: dynamic inputs
+  * Mappings: static variables
+  * Outputs
+  * Conditionals
+  * Metadata
+* Helpers
+  * References
+  * Functions
+* Resources
+  * AWS componentes
+  * [224 types of resources](https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html)
+  * Form: :aws-product-name::data-type-name
+  * Don't support dynamic amount of resources
+* Parameters
+  * Use for things that can change in the future
+  * Types: String | Number | CommaDelimitedList | List | AWS Parameter
+  * Constraints: Min | Max | Defaults | AllowedValues
+  * Reference: Fn::Ref or !Ref
+  * Pseudo parameters: AccountId, StackName, StackId, Region, NoValue, NotificationARNs
+* Mappings
+  * Fixed variables
+  * Eg:. RegionMap AZ use specific AMI
+  * Access Mapping value: Fn::FindInMap or !FindInMap [MapName, TopLevelKey, SecondLevelKey]
+    !FinInMap [RegionMap, !REf "AWS::Region", 32]
+* Output
+  * They can be used to export to other CloudFormation templates
+  * Fn::ImportValue or !ImportValue to reuse an output
+  * An stack with refence outputs used by other stack can't be deleted
+  * Names must be unique in the Region
+* Conditions
+  * Control creation of resources or outputs
+  * !And, !Equals, !If, !Not, !Or
+* Intrinsic Functions
+  * Ref
+    * Parameters: Return the value
+    * Resources: Return the physical ID
+  * GetAtt
+    * Allows to get additional values, not just the name
+  * FindInMap
+  * ImportValue
+  * Join: Join values
+    * !Join[":",[a,b,c]]
+  * Sub: Substitute
+    * !Sub
+      * String
+      * {Var1Name: Var1Value, Var2Name: Var2Value}
+  * Conditions
+* Rollback
+  * Default: everything rolls back (gets deleted). Can be disabled
+  * If stack update fails, it rolls back to the previous state. Can be disabled
