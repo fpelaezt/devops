@@ -1,12 +1,13 @@
 # CHAPTER 1
 
-* AWS Cloud Computing Platform
-  * Premium Support: Bacic (6 Trusted Advisor), Developer (6 TA), Business (Full TA), Enterprise (Full TA)
-  * Accessing: Management Console, CLI, SDKs
-  * Console: https://<account_id>.signin.aws.amazon.com/console
-  * SDK (Java, .NET, Node.js, PHP, Python, Ruby, Go, C++, AWS Mobile SDK) - Not supported (Pascal, SQL, Perl)
+## AWS Cloud Computing Platform
 
-## Compute/Networking
+* Premium Support: Bacic (6 Trusted Advisor), Developer (6 TA), Business (Full TA), Enterprise (Full TA)
+* Accessing: Management Console, CLI, SDKs
+* Console: https://<account_id>.signin.aws.amazon.com/console
+* SDK (Java, .NET, Node.js, PHP, Python, Ruby, Go, C++, AWS Mobile SDK) - Not supported (Pascal, SQL, Perl)
+
+### Compute/Networking
 
 * Amazon Elastic Compute Cloud EC2 (virtual servers)
 * AWS Lambda (ejecución de código)
@@ -37,7 +38,7 @@
 * AWS Storage Gateway (connection On-Premise with AWS)
 * Amazon CloudFront (content delivery)
 
-## Database
+### Database
 
 * Amazon Relational Database Service RDS
 * Amazon SimpleDB (NoSQL)
@@ -45,7 +46,7 @@
 * Amazon Redshift (SQL data warehouse)
 * Amazon ElasticCache (supports Memcached and Redis engines)
 
-## Management Tools
+### Management Tools
 
 * Amazon CloudWatch (monitor cloud resources)
 * AWS CloudFormation (JSON-base template for provisioning resources)
@@ -53,7 +54,7 @@
 * AWS Config (inventory and configuration history)
 * Amazon EC2 Manager (run commands, inventory, apply patches, parameter stores - keys)
 
-## Security and Identity
+### Security and Identity
 
 * AWS Identity and Access Management IAM (control access)
 * AWS Key Management Service KMS (control encryption keys, uses Hardware Security Modules HSMs)
@@ -61,7 +62,7 @@
 * AWS Certificate Manager (manages SSL/TLS, pay for resources where are used)
 * AWS Web Application Firewall WAF (protects web applications)
 
-## Application Services
+### Application Services
 
 * Amazon API Gateway (deploy and manage APIs)
 * Amazon Elastic Transcoder (transcode media files)
@@ -70,13 +71,13 @@
 * Amazon Simple Workflow Service SWF (build/run background parallel/secuencial jobs)
 * Amazon Simple Queue Service SQS (decouples)
 
-## Migration
+### Migration
 
 * AWS Application Discovery Services (Collects configurations and usage data from on-premise)
 * AWS Database Migration Service (DMS - use also for data replication)
 * AWS Server Migration Service
 
-## Other services
+### Other services
 
 * Amazon Kinesis (load and analysis streaming data in real-time)
 * Amazon Elastic MapReduce (Big Data: Hadoop, Spark, HBase, Presto, Hive, etc)
