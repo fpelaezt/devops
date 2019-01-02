@@ -323,3 +323,75 @@
 
 * Audit API calls
 * If a resource is deleted, look into CloudTrail first
+
+## AWS Integration & Messaging
+
+### SQS
+
+* Standard Queue
+  * 10 years old
+  * Up to 10k msg/sec
+  * Default retention 4 days, Up to 14 days
+  * Low latency <10ms
+  * Up to 256KB per message
+* Delay Queue
+  * Default delay 0*, Up to 15 minutes
+  * Use DelaySeconds to overwrite queue configuration
+* Message
+  * Body
+    * String up to 256KB
+    * Metadata [Key-Value]
+  * Return
+    * Message identifier
+    * MD5 hash
+* Consumers
+  * Receive up to 10 message at a time
+  * Process the message withing the visibility timeout
+  * Delete the message using ID & receipt handle (DeleteMessage)
+* Visibility Timeout
+  * Default 30*, Min 0, Up to 12 hours
+  * Use ChangeMessageVisibility to overwirte queue configuration
+* Dead Letter Queue (DLQ)
+  * Redrive Policy: Send to a DLQ when visibility timeout has exceeded a threshold
+* Long Polling
+  * From 1 to 20* seconds
+  * Use WaitTimeSeconds to overwirte queue configuration
+* FIFO Queue
+  * Queue names must end with .fifo
+  * Messages are processed in order and only once
+  * Not available in all regions
+  * Lower throughput 3k/sec with batching, 300/s without
+  * No per message delay (only per queue)
+  * De-deplication interval 5 min
+  * Message GroupID allows to group. Extra tag
+  * Only one worker per group
+* Advance Concepts
+  * SQS Extended Client
+    * Allows to send large messages
+    * Use S3 to store the message
+  * Security
+    * HTTPS for in flight
+    * SSE
+      * Can set CMK
+      * Can set the data key reuse period. From 1 min up to 24 hours
+        * Lower KMS API call, less secure, less expensive
+      * Only encrypts the body, not the metadata
+      * IAM controls usages of SQS
+      * SQS queue access policy
+        * Finer grained
+      * No VPC Endpoint, must use internet to access SQS
+  * API Calls
+    * CreateQueue | DeleteQueue
+    * PurgeQueue
+    * SendMessage | ReceiveMessage | DeleteMessage
+    * ChangeMessageVisibility
+  * Batch APIs
+    * SendMessage | DeleteMessage | ChangeMessageVisibility
+  
+### SNS
+
+* Producer send one message to the topic
+* Up to 10 million subscriber per topic
+* 100k topics
+* Fan Out
+  * Push to one SNS, receive in many SQS
