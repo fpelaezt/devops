@@ -7,7 +7,7 @@
 * [Amazon Instance types](https://aws.amazon.com/es/ec2/instance-types/)
 * [Amazon Instances review](https://ec2instances.info/)
 * Meta-Data: http://169.254.169.254/latest/meta-data/
-* [Montly Calculator](https://calculator.s3.amazonaws.com/index.html)
+* [Monthly Calculator](https://calculator.s3.amazonaws.com/index.html)
 
 ## RDS
 
@@ -42,7 +42,7 @@
 * Exponential Backoff: After an API failure, the SDK retries waiting an exponential curve
 * [Boto3 Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/index.html)
 
-## ElasticBeanStalk
+## Elastic Beanstalk
 
 * Deployments Modes
   * Single Instance: Dev, 1 AVZ, 1 Elastic IP, 1 WebApp Server
@@ -66,11 +66,11 @@
 
 * CodeCommit, CodePipeline, CodeBuild, CodeDeploy
 * CodeBuild = Jenkins
-  * Steps
-    * Code: CodeCommit & GitHub
-    * Build + Test: CodeBuild & Jenkins CI
-    * Deploy + Provision: ElasticBeanstalk & CodeDeploy or * CloudFormation
-    * Orchrestrate: CodePipeline
+* Steps
+  * Code: CodeCommit & GitHub
+  * Build + Test: CodeBuild & Jenkins CI
+  * Deploy + Provision: ElasticBeanstalk & CodeDeploy or * CloudFormation
+  * Orchrestrate: CodePipeline
 
 ## CodeCommit
 
@@ -83,11 +83,12 @@
 * Encryption
   * Repositories are encrypted at rest using KMS
   * Encrypted in transit (only HTTPS or SSH)
-  * Cross Account access
+  * Cross Account Access
     * IAM Role and use AWS STS (with AssumeRole API)
 * Notification
   * AWS SNS /  Lambda
-  * Deletion branches, Push into master, notify external * Build, Trigger lambda to perform codebase analysis
+    * Deletion branches, Push into master, notify external build
+    * Trigger lambda to perform codebase analysis
   * CloudWatch Event Rules
     * Trigger for pull request updates
     * Commit comments events
@@ -219,7 +220,7 @@
   * Fixed variables
   * Eg:. RegionMap AZ use specific AMI
   * Access Mapping value: Fn::FindInMap or !FindInMap [MapName, TopLevelKey, SecondLevelKey]
-    !FinInMap [RegionMap, !REf "AWS::Region", 32]
+  * eg:. !FinInMap [RegionMap, !REf "AWS::Region", 32]
 * Output
   * They can be used to export to other CloudFormation templates
   * Fn::ImportValue or !ImportValue to reuse an output
@@ -303,7 +304,7 @@
   * Annotation can be added to traces to provide extra-info
 * Scope
   * Every request
-  * Sample request (% or Rate per Minite)
+  * Sample request (% or Rate per Minute)
 * Security
   * IAM for authorization
   * KMS for encryption at rest
