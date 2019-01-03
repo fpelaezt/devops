@@ -266,7 +266,7 @@
   * Custom Metrics
     * Standard: 1 minute
     * High Resolution: 1 second - higher cost (APICall StorageResolution)
-    * Use API PutMetricData to send a custom metric
+    * Use API __PutMetricData__ to send a custom metric
     * Use exponential back off
 * Logs
   * Collect and analyze
@@ -336,7 +336,7 @@
   * Up to 256KB per message
 * Delay Queue
   * Default delay 0*, Up to 15 minutes
-  * Use DelaySeconds to overwrite queue configuration
+  * Use __DelaySeconds__ to overwrite queue configuration
 * Message
   * Body
     * String up to 256KB
@@ -350,12 +350,12 @@
   * Delete the message using ID & receipt handle (DeleteMessage)
 * Visibility Timeout
   * Default 30*, Min 0, Up to 12 hours
-  * Use ChangeMessageVisibility to overwirte queue configuration
+  * Use __ChangeMessageVisibility__ to overwirte queue configuration
 * Dead Letter Queue (DLQ)
   * Redrive Policy: Send to a DLQ when visibility timeout has exceeded a threshold
 * Long Polling
   * From 1 to 20* seconds
-  * Use WaitTimeSeconds to overwirte queue configuration
+  * Use __WaitTimeSeconds__ to overwirte queue configuration
 * FIFO Queue
   * Queue names must end with .fifo
   * Messages are processed in order and only once
@@ -395,3 +395,96 @@
 * 100k topics
 * Fan Out
   * Push to one SNS, receive in many SQS
+  
+### AWS Kinesis
+
+* Alternative to Apache Kafka
+* Big Data streaming tools
+* Real-Time big data
+* Automatically replicated to 3 AZ
+* Kinesis Streams
+  * Low latency ingest
+* Kinesis Analytics
+  * Real-time analytics using SQL
+* Kinesis Firehose
+  * Load streams into S3, Readshift, ElasticSearch
+  * Near real-time (60ms)
+  * Pay for the conversion and amount of data
+* Stream are divided in ordered Shards / Partitions
+* Default retention 1 day, Up to 7 days
+* Ability to reprocess / replay data (go back in time)
+* Multiple application can consume same streams
+* Once data is inserted, it can't be deleted
+* Shards
+  * 1MB/s or 1k messages/s at write per shard
+  * 2MB/s at read per shard
+  * Billed per shard
+  * Batching available
+  * Records are ordered per shard
+  * Number of shard can change (reshard / merge)
+* Put Records
+  * __PutRecord__ API + Partition Key
+  * Same key goes to same partition
+  * Random key to prevent hot partition
+  * __PutRecords__ for Bash
+  * If gets error __ProvisionedThroughputExceeded__ when limits exceded
+* Consumers
+  * Normal consumer: CLI, SDK, etc
+  * Kinesis Clien Library (Java, Node, Python, Ruby, .NET)
+    * Uses DynamoDB to checkpoint offsets
+    * Uses DynamoDB to track other workers and share work among shards
+* Security
+  * Encrytion at rest is available
+  * VPC endpoints available
+
+## AWS Lambda
+
+* Virtual functions
+* Limited by time
+* Run on-demand
+* Scaling is automated
+* Pay per request and compute time. See [Pricing](https://aws.amazon.com/lambda/pricing/?nc1=h_ls)
+* Free Tier: 1 million and 400.000 GB seconds of compute time
+* Easy monitoring with CloudWatch
+* Easy to get more resources per function
+* Support: Node.js, Python, Java, C#, Goland, .NET
+* Configuration
+  * Timeout
+  * Environment variables
+  * Allocated memory
+  * Ability to deploy in a VPC
+  * Must have a role
+* Concurrency
+  * Can be set a limit using "Reserve concurrency"
+  * Each extra invocation trigger a __Throttle__
+    * syncrhonous invocation: return __ThrottleError__ - 429
+    * asyncrhonous invocation: retry automatically twice and then go to DLQ
+* DLQ types: SNS topic or SQS queue
+* Limits
+  * Time: Default 3 sec, up to 300 sec
+  * Memory: 128M to 3G (3008MB) - 64MB increments
+  * Disk: 512MB in /tmp
+  * Concurrency: 1k
+  * Code: 50MB .zip
+  * Code: 250MB uncompressed
+  * Env Variables: 4KB
+* Versions
+  * Code + Configuration
+  * Versions are inmutable
+  * $LATEST: Current
+* Aliases
+  * Pointers to Lambda versions
+  * Mutable
+  * Enable weight traffic to new versions
+* Best practices
+  * Heavy-duty outside function handler
+    * Connection to DB
+    * Initialize AWS SDK
+    * Pull it dependencies
+  * Environment varialbes
+    * Connections strings, S3 buckets
+    * Sensitive values must be encrypted
+  * Minimize deployment package
+  * Don't use recursive code
+  * Don't put in a VPC unless needed
+  
