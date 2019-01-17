@@ -1,9 +1,9 @@
 # CHAPTER 3
- 
+
 ## Amazon Elastic Compute Cloud (Amazon EC2) and Amazon Elastic Block Store (Amazon EBS)
----------
 
 ## Amazon Elastic Compute Cloud EC2
+
 * Adquire compute power using Virtual machines called Instances
 * Default limit 20 per Region
 * No cost for data transfer to S3 in the same Region
@@ -13,12 +13,12 @@
 * Instance Types
   * Vary from: vCPU's, Memory, Storage, Network
   * t2, m[4-5]	: balanced
-  * T                  	: Burstable
-  * c[3-5]            	: compute
-  * r[2-4], x1        	: memory
-  * d2, h1, i[2-3]    	: storage (high I/O)
-  * f1, g[2-3], p[2-3]: accelerated computing 
-  * g2                	: GPU-based (graphics)
+  * T                   : Burstable
+  * c[3-5]              : compute
+  * r[2-4], x1          : memory
+  * d2, h1, i[2-3]      : storage (high I/O)
+  * f1, g[2-3], p[2-3]  : accelerated computing
+  * g2                  : GPU-based (graphics)
 * Netwotk performance
   * Low
   * Moderate
@@ -80,7 +80,7 @@
     * VM Import/Export
       * Only available to previously imported instances
     * Instance Metadata
-      * HTTP call. curl http://169.254.169.254/latest/meta-data
+      * HTTP call. Curl http://169.254.169.254/latest/meta-data
       * Include: security group, ID, type, AMI used to launch
     * Managing Instances: Tags Key/Value pair. Up to 10 tags per instance
     * Monitoring: Amazon CloudWatch
