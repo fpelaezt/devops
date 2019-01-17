@@ -42,7 +42,7 @@
 * Exponential Backoff: After an API failure, the SDK retries waiting an exponential curve
 * [Boto3 Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/index.html)
 
-## Elastic Beanstalk
+## Elastic Beanstalk
 
 * Deployments Modes
   * Single Instance: Dev, 1 AVZ, 1 Elastic IP, 1 WebApp Server
@@ -487,4 +487,131 @@
   * Minimize deployment package
   * Don't use recursive code
   * Don't put in a VPC unless needed
-  
+
+## DynamoDB
+
+* Fully managed NoSQL Serverless Database
+* Scales horizotally
+* All data is present in one row
+* High available with replication across 3 AZ
+* Support millions of requests/sec and TB storage
+* Low latency
+* Enable event driver programming with DynamoDB Streams
+* Tables
+  * Primary Key (decided at time creation)
+  * Tables can have infinite items (rows)
+  * Itimes has attributes (can be added over time)
+  * Maximum item size is 400KB
+  * Data types
+    * Scalar: String, Number, Binary, Boolean, Null
+    * Document: List, Map
+    * Set: String, Number, Binary
+* Primary Key
+  * Option 1: Partition Key (Use to distribute data). Similar to SQL tables
+  * Option 2: Partition Key + Sort Key (Combiation must be unique)
+* Provisioned Throughput (Capacity Units)
+  * Can be exceeded using "burst credit"
+  * If "burst credit" is empty, get an error __ProvisionedThroughputException__
+  * It's advised to do exponential back-off retry
+  * WCU: Write
+    * 1 WCU is equivalent to
+      * 1 write/sec
+      * Item of 1 KB
+    * Formula = (write/WCU=[1])/sec * (Size/1KB)
+    * It need to round size (up) to a multiple of 1KB
+  * RCU: Read
+    * 1 RCU is equivalent to
+      * 1 read/sec (strongly consistent)
+      * 2 read/sec (eventually consistent)
+      * Item size 4KB
+    * Formula = (read/RCU=[1,2])/sec * (Size/4KB)
+    * It need to round size (up) to a multiple of 4KB
+* Data is divided in partitons
+  * Number of partitions
+    * By Capacity: (TOTAL RCU / 3000) + (Total WCU / 1000)
+    * By Size: (TOTAL SIZE / 10 GB)
+    * Total partitions: CEILING(MAX(Capacity, Size))
+  * WCU/RCU are spread evenly between partitions
+* Throttling
+  * If RCU/WCI are exceeded, get an error ____ProvisionedThroughputExceededException__
+  * It happens becuase: Hot keys, Hot partitions, Very large items
+  * Solutions
+    * Exponential back-off
+    * Distribute partitions
+    * If RCU issue, use DynamoDB Accelerator (DAX)
+* API
+  * PutItem
+  * UpdateItem
+    * Conditional Writes: Only if conditions are respected
+  * DeleteItem
+    * Individual row
+    * Conditional delete
+  * DelteTable
+  * BatchWriteItem
+    * Up to 25 PutItem / DeleteItel
+    * Up to 16MB
+    * Up to 400KB of data per item
+    * Operations are donde in parallel
+    * Up to user to rety faile updates
+  * GetItem
+    * Option to use strongly consistent
+    * __ProjectionExpression__ can be used to obtain only certain attributes
+  * BathGetItem
+    * Up to 100 item
+    * Up to 16 MB
+  * Query
+    * Return item based on Partition + SortKey
+    * __FilterExpression__ can be used on clien side
+    * Return Up to 1MB
+    * Number of items specified in __Limit__
+  * Scan (inefficient)
+    * Read entire table
+    * Return Up to 1MB
+    * Consume a lot of RCU
+    * Number of items specified in __Limit__
+    * Parallel scan to faster performance
+    * Can use __ProjectionExpression__ + __FilterExpression__
+* Indexes
+  * Local Secondary Index (LSI)
+    * Alternate range key
+    * Up to 5 per table
+    * One scalat attribure
+    * Must be defined at table creation time
+  * Global Secondary Index (GSI)
+    * Spped queries on non-key attributes
+    * Partition key + Optional sort key
+    * Index is a new "table", we can project attributes
+      * KEYS_ONLY
+      * INCLUDE
+      * ALL
+    * Must define RCU/WCU for index
+    * Possibility to add/modify GSI (not LSI)
+* Concurrency
+  * Optimistic locking / concurrency database
+* DAX
+  * Cache, all writes go through DAX
+  * Solves the Hot Key problem (too many reads)
+  * 5 minutes TTL for cache
+  * Up to 10 nodes in the cluster
+  * Multi AZ
+* DB Streams
+  * Changelog end up in a stream
+  * Stream can be read by AWS Lambda to:
+    * React in real time
+    * Analytics
+    * Create derivative tables /views
+    * Insert into ElasticSearch
+  * Could implement cross region replication
+  * 24 hours retention
+* Security
+  * VPC Endpoints available
+  * Controlled by IAM
+  * Encryption at rest using KMS
+  * Encryption in transit using SSL / TLS
+* Backups and Restore features
+  * No performance impact
+  * Point in time restore like RDS
+* Global Tables
+  * Multi region, fully replicated, high performance
+* Amazon DMS to migrate to DynamoDB
+* A local DynamoDB can be launch in the computer for testing
