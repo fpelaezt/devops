@@ -615,3 +615,92 @@
   * Multi region, fully replicated, high performance
 * Amazon DMS to migrate to DynamoDB
 * A local DynamoDB can be launch in the computer for testing
+
+## API Gateway
+
+* Handle API versioning
+* Handle different environments
+* Handle security (AA)
+* Handle throttling
+* Create API keys
+* Integration with Swagger / Open API to import APIs
+* Transform/Validate requests/responses
+* Cache API responses
+* Changes must be deployed to "Stages"
+* Stages
+  * Environments
+  * Variables
+    * Similar to env vars to change configuration
+    * Are passed to the __context__ of Lambda
+    * Use Case: point to Lambda alias
+* Canary Deployment
+  * Choose % traffic
+* Mapping Templates
+  * Can modify boddy, parameters, request/responses
+  * Can add headers
+  * Can map JSON to XML
+  * Use VTL language (Velocity Template Language)
+* Swagger (Open API spec)
+  * Define REST APIs as code
+  * Import/Export
+* Caching
+  * TTL from 0-300 sec. Default 300s
+  * Can be encrypted
+  * Storage from 0.5-237 GB
+  * Can be defined per stage or per methods
+  * Can flush entire cache
+  * Client can invalidate with header __Cache-Control:max-age=0__ (proper IAM authorization)
+* Monitoring (with proper IAM role)
+  * CloudWatch Logs
+    * Enable at Stage level
+  * CloudWatch Metrics
+    * Metric are by stage
+  * X-Ray
+* CORS
+  * Cross Origin Resource Sharing
+  * Enable to other domains
+  * OPTIONS pre-flight request must contain these headers
+    * __Access-Control-Allow-Methods__
+    * __Access-Control-Allow-Headers__
+    * __Access-Control-Allow-Origin__
+* Usage Plans
+  * Limit customers
+  * Throttling: Overall and burst capacity
+  * Quotas: Number of request per day/week/month
+  * Associated with API Stages
+* API Keys
+  * Per customer
+  * Associate with plans
+  * Track usage for API Keys (bill clients)
+* Security
+  * IAM Permissions
+    * Sig v4: Authorize User/Rol to access API Gateway
+  * Lambda Authorizer (Custom Authorizer)
+    * Use Lambda to validate toker in header
+    * Option to cache result of authentication
+    * Pey per Lambda invocation
+    * Help to use OAuth / SAML / 3rd party authentication
+  * Cognito
+    * Manage user lifecycle
+    * Only help with authentication (not authorization)
+
+## AWS Cognito
+
+* Product Types
+  * Cognito User Pools (CUP)
+    * Sign in functionality for app users
+    * Integrated with API Gateway
+    * Serverless database of users
+    * Can enable Federated Identities (Facebook/Google/SAML)
+    * Sends back a JSON Web Token (JWT)
+  * Cognigo Identity Pools (Federated Identity)
+    * Provides AWS credentials to user to access AWS resources directly
+    * Integrated with Cognito User Pools
+  * Cognito Sync
+    * Synchronize data from device to Cognito
+    * Deprecated and replace by AppSync
+    * Requires Federates Identity Pool (not User Pool)
+    * Store data in datasets (Up to 1MB)
+    * Up to 20 dataset to synchronize
+
+## SAM (Serverless Application Model)
