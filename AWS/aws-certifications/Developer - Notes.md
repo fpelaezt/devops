@@ -704,3 +704,19 @@
     * Up to 20 dataset to synchronize
 
 ## SAM (Serverless Application Model)
+
+* Framework for developing and deploying SAM
+* Config are YAML files
+* Support CloudFormation components
+* YAML
+  * Header: Transform: 'AWS::Serverless-2015-10-31'
+  * Helpers:
+    * 'AWS::Serverless::Function' (Lambda)
+    * 'AWS::Serverless::Api' (API Gateway)
+    * 'AWS::Serverless::SimpeTable' (DynamoDB)
+  * Package & Deploy
+    * aws cloudformation package / sam package
+    * aws cloudformation deploy / sam deploy
+* [SAM Examples](https://github.com/awslabs/serverless-application-model/tree/master/examples/apps)
+
+## AWS Security
