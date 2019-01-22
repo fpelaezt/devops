@@ -720,3 +720,42 @@
 * [SAM Examples](https://github.com/awslabs/serverless-application-model/tree/master/examples/apps)
 
 ## AWS Security
+
+* Encryption in flight
+* Encryption at rest
+  * SSE
+  * CSE
+* KMS
+  * Fully integrated with IAM
+  * KMS can only 4KB of data per call
+  * If data > 4KB use envelope encryption
+  * Create/Rotate/Disable/Enable
+  * Types of CMK
+    * AWS Managed Service Default CMK: free
+    * User Kery created in KMS: $1/month
+    * User Keys imported (256-bit symetic key): $1/month
+  * Pay for API call to KMS ($0.03/1k calls)
+  * API
+    * Encrypt
+    * Decrypt
+
+* Encryption SDK
+  * Helps to use Envelope Encryption
+  * Different from S3 Encryption SDK
+  * Exists as a CLI tool
+  * API Call: GenerateDataKey API
+
+* AWS Parameter Store (SSM)
+  * Simple Systems Manager
+  * Secure storage for configuration and secrets
+  * Free
+  * Version tracking
+  * Integrated with IAM
+  * Notification with CloudWatch Events
+  * Integration with CloudFormation
+  * Organized by Hierarchy
+
+* STS
+  * Security Token Service
+  * AssumeRole API
+  * Temporaty credentials [15m - 1 h]
