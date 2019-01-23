@@ -759,3 +759,67 @@
   * Security Token Service
   * AssumeRole API
   * Temporaty credentials [15m - 1 h]
+
+## Other AWS Services
+
+### AWS CloudFront
+
+* Content Delivery Network (CDN)
+* Improve read performance
+* Around 136 Point of Presence (edge location)
+* Support RTMP Protocol
+
+### AWS Step Functions
+
+* Build serverless visual workflows to orchestrate Lambda functions
+* Represent flow as JSON state machine
+* Features: sequence, parallel, conditions, timeouts, error handling
+* Can also integrate with EC2, API Gateway
+* Maximum execution time: 1 year
+
+### AWS Simple Workflow Service (SWF)
+
+* Coordinate work amongst applications
+* Code run on EC2 (not serverless)
+* Older than Step Functions ()
+* Used over Setp Functions only if external signals or child processes are needed
+
+### AWS ECS (Elastic Container Service)
+
+* Help to run Docker containers on EC2 machines
+* Components
+  * ECS Core: Running ECS on EC2 instances
+  * Fargate: Running ECS tasks (serverless)
+  * EKS: Running ECS on Kubernetes (EC2)
+  * ECR: Docker Container Registry
+* IAM and roles at the ECS task level
+* Use Cases: microservices, batch processing, migrate apps
+* Concepts
+  * ECS Cluster
+  * ECS Service
+  * ECS Tasks + Definition
+  * ECS IAM roles
+* ALB (App Load Balancer) integration
+  * Use Dynamic Port Mapping
+* Setup
+  * EC2 Instance
+  * Install
+    * ECS agent
+    * Config file
+      * /etc/ecs/ecs.config
+        * __ECS_CLUSTER__: Assign EC2 to ECS cluster
+        * __ECS_ENGINE_AUTH_DATA__:  Pull images from private registries
+        * __ECS_AVAILABLE_LOGGING_DRIVERS__: CloudWatch container loggin
+        * __ECS_ENABLE_TASK_IAM_ROLE__: Enable IAM roles for ECS tasks
+
+### AWS Databases
+
+* RDS: OLTP
+  * PostgreSQL, MySQL, Oracle, Aurora
+* DynamoDB: NoSQL
+* ElasticCache: In memory DB
+* Redshift: OLAP
+  * Analytic
+  * Data Warehousing / Data Lake
+* Neptune: Graph DB
+* DMS: Database Migration Service
