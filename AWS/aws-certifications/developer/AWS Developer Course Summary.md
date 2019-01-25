@@ -1,4 +1,4 @@
-# Notes
+# Ultimate AWS Certified Developer Associate 2019 - Summary
 
 ## EC2
 
@@ -20,17 +20,21 @@
 * Encryption
   * SSE-S3 Encryption
     * Must set header: “x-amz-server-side-encryption”:”AES-256”
-    * S3 Managed Data Key
+    * S3 Managed Data Key (Managed by AWS)
   * SSE-KMS Encryption
     * Must set header: “x-amz-server-side-encryption”:”aws-kms”
-    * KMS Customer Master Key
+    * KMS Customer Master Key (Managed by the User)
   * SSE-C
     * Must use https
     * Encryption key must be provided in the HTTP headers
     * Client Side Data Key
     * Client-provider Data Key
+    * User manages Data Key and Master Key
 * CORS
   * Cross Origin Resource Sharing
+* Limits
+  * Bucket: unlimited
+  * File: 5TB
 
 ## Policies
 
@@ -61,6 +65,7 @@
   * eb [create | status | health | events | logs | open | deploy | config | terminate]
 * Relies on CloudFormation
 * Optimization: Package dependencies into source code to avoid EC2 to resolve them
+* 1 environment runs 1 app version
 
 ## CICD
 
@@ -98,6 +103,7 @@
 
 * Add manual approval
 * Each stage create Artifacts
+* Each stage contains a set of actions
 * Changes are recorded into AWS CloudWatch Events (can trigger SNS)
 * IAM Service Role must have appropriate permissions
 
@@ -136,6 +142,7 @@
 ## CodeDeploy
 
 * Use to Deploy app into many EC2 or On Premise
+* Use to deploy EC2 instances or Lambda functions
 * Not managed by Elastic Beanstalk
 * Use a codedeploy-agent service on the servers
 * Sends appspec.yml
@@ -349,7 +356,7 @@
   * Process the message withing the visibility timeout
   * Delete the message using ID & receipt handle (DeleteMessage)
 * Visibility Timeout
-  * Default 30*, Min 0, Up to 12 hours
+  * Default 30sec*, Min 0sec, Up to 12 hours
   * Use __ChangeMessageVisibility__ to overwirte queue configuration
 * Dead Letter Queue (DLQ)
   * Redrive Policy: Send to a DLQ when visibility timeout has exceeded a threshold
@@ -575,10 +582,11 @@
   * Local Secondary Index (LSI)
     * Alternate range key
     * Up to 5 per table
-    * One scalat attribure
+    * One scalar attribute
     * Must be defined at table creation time
+    * Its hash key is the same as the hask key of main table
   * Global Secondary Index (GSI)
-    * Spped queries on non-key attributes
+    * Speed queries on non-key attributes
     * Partition key + Optional sort key
     * Index is a new "table", we can project attributes
       * KEYS_ONLY
@@ -586,6 +594,7 @@
       * ALL
     * Must define RCU/WCU for index
     * Possibility to add/modify GSI (not LSI)
+    * Allow query entire table, accros all partitions
 * Concurrency
   * Optimistic locking / concurrency database
 * DAX
@@ -633,6 +642,8 @@
     * Similar to env vars to change configuration
     * Are passed to the __context__ of Lambda
     * Use Case: point to Lambda alias
+* URL
+  * https://xxx.yyy/resource/stage (eg:. /chapters/dev)
 * Canary Deployment
   * Choose % traffic
 * Mapping Templates
@@ -693,7 +704,7 @@
     * Serverless database of users
     * Can enable Federated Identities (Facebook/Google/SAML)
     * Sends back a JSON Web Token (JWT)
-  * Cognigo Identity Pools (Federated Identity)
+  * Cognito Identity Pools (Federated Identity)
     * Provides AWS credentials to user to access AWS resources directly
     * Integrated with Cognito User Pools
   * Cognito Sync
@@ -801,6 +812,7 @@
   * ECS IAM roles
 * ALB (App Load Balancer) integration
   * Use Dynamic Port Mapping
+  * Support WebSocket and HTTP/2
 * Setup
   * EC2 Instance
   * Install
