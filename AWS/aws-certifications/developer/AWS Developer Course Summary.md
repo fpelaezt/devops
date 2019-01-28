@@ -48,6 +48,7 @@
 
 ## Elastic Beanstalk
 
+* Supports: Java SE, Java+Tomcat, PHP, Node.js, Python, Ruby, Go, Docker
 * Deployments Modes
   * Single Instance: Dev, 1 AVZ, 1 Elastic IP, 1 WebApp Server
   * High Availability: Prod, Multiple AVZ, Load Balancer, ASG
@@ -117,7 +118,10 @@
   * Uses IAM to build
   * Uses VPN to network
   * Uses CloudTrail for API logging
-* buildspec.yml: Build instructions
+* Components
+  * Project: Define how AWS runs a build
+  * Environment: OS + Language + Tools
+  * Specs: buildspec.yml contains Build commands
 * Output logs to S3 and CloudWatch
 * CodeBuild Statistics to see metrics
 * Uses CloudWatch Alarms to detect failed build and trigger notifications
@@ -138,11 +142,16 @@
     * Pre-Build: final commands
     * Build
     * Post Build
+* Commands
+  * create-project
+  * update-project
+  * start-build
+  * batch-get-builds
 
 ## CodeDeploy
 
 * Use to Deploy app into many EC2 or On Premise
-* Use to deploy EC2 instances or Lambda functions
+* Support AWS Lambda deployments
 * Not managed by Elastic Beanstalk
 * Use a codedeploy-agent service on the servers
 * Sends appspec.yml
@@ -152,7 +161,6 @@
 * More powerfull than Elastic Beanstalk
 * Support any application
 * Support Blue/Green deployment on EC2 servers
-* Support AWS Lambda deployments
 * Don't provision resources
 * Components
   * Application: unique name
@@ -185,7 +193,7 @@
 * Failures
   * Instances stay in "failed state"
   * New deployments will first be deployed to "failed state" instances
-  * Rollback: redeploy old deployment or enable automated rollback
+  * Rollback: re-deploy old deployment or enable automated rollback
 * Deployment targets
   * Set of tagged EC2 instances
   * Directly to an ASG
@@ -266,6 +274,7 @@
   * Up to 10 Dimensions per metric
   * Have timestamps
   * Can create dashboards
+  * Aggregation: To consolidate from different location or random spread in time
   * EC2
     * Default: every 5 minutes
     * Detailed monitoring: every minute
@@ -283,7 +292,7 @@
     * Log group --> Log stream
   * Log expiration policy
   * To send logs, make sure IAM permissions are correct
-  * Encryted can be set to logs at rest using KMS at Group Level
+  * Encryption can be set to logs at rest using KMS at Group Level
   * Policy expiration should be set at Group Level
 * Events
   * Send notifications
@@ -315,13 +324,13 @@
 * Security
   * IAM for authorization
   * KMS for encryption at rest
-* Enable on EC2
+* To Enable on EC2
   * Code (JAVA, Python, Go, Node.js, .NET) must import X-Ray SDK
     * Capture Call to AWS services, HTTPS/HTTPS, Database Calls, SQS
   * Install X-Ray deamon or enable X-Ray AWS Integration
   * Low level IDP packet interceptor
   * Each app must have the IAM rights to write data to X-Ray
-* Enable on Lambda
+* To Enable on Lambda
   * Uses an IAM Role with policy AWSX-RayWriteOnlyAccess
 * Enable on Elastic Beanstalk
   * Create an xray-deamon.config in the .ebextensions folder
@@ -394,7 +403,8 @@
     * ChangeMessageVisibility
   * Batch APIs
     * SendMessage | DeleteMessage | ChangeMessageVisibility
-  
+  * Support Java Message Service (JMS)
+
 ### SNS
 
 * Producer send one message to the topic
@@ -452,7 +462,7 @@
 * Scaling is automated
 * Pay per request and compute time. See [Pricing](https://aws.amazon.com/lambda/pricing/?nc1=h_ls)
 * Free Tier: 1 million and 400.000 GB seconds of compute time
-* Easy monitoring with CloudWatch
+* Easy monitoring with CloudWatch Logs
 * Easy to get more resources per function
 * Support: Node.js, Python, Java, C#, Goland, .NET
 * Configuration
@@ -468,7 +478,7 @@
     * asyncrhonous invocation: retry automatically twice and then go to DLQ
 * DLQ types: SNS topic or SQS queue
 * Limits
-  * Time: Default 3 sec, up to 300 sec
+  * Time: Default 3 sec, up to 900 sec (15 min)
   * Memory: 128M to 3G (3008MB) - 64MB increments
   * Disk: 512MB in /tmp
   * Concurrency: 1k
@@ -568,7 +578,7 @@
     * Up to 16 MB
   * Query
     * Return item based on Partition + SortKey
-    * __FilterExpression__ can be used on clien side
+    * __FilterExpression__ can be used on client side
     * Return Up to 1MB
     * Number of items specified in __Limit__
   * Scan (inefficient)
@@ -770,6 +780,7 @@
   * Security Token Service
   * AssumeRole API
   * Temporaty credentials [15m - 1 h]
+  * Use mainly for Users. For application use Access-Keys
 
 ## Other AWS Services
 
@@ -829,7 +840,12 @@
 * RDS: OLTP
   * PostgreSQL, MySQL, Oracle, Aurora
 * DynamoDB: NoSQL
-* ElasticCache: In memory DB
+* ElasticCache
+  * In memory DB
+  * Strategies
+    * Lazy Loading: After a cache missed, app write data to the cache
+    * Write Through: After every change in data, the cache is updated also
+    * Adding TTL: Add a TTL in the cache
 * Redshift: OLAP
   * Analytic
   * Data Warehousing / Data Lake
