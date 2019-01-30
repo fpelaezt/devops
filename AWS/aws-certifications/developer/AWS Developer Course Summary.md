@@ -6,7 +6,7 @@
 * User Data: Accept bash scripts
 * [Amazon Instance types](https://aws.amazon.com/es/ec2/instance-types/)
 * [Amazon Instances review](https://ec2instances.info/)
-* Meta-Data: http://169.254.169.254/latest/meta-data/
+* Instance Meta-Data: http://169.254.169.254/latest/meta-data/
 * [Monthly Calculator](https://calculator.s3.amazonaws.com/index.html)
 
 ## RDS
@@ -14,6 +14,7 @@
 * Enforce SSL on RDS:
   * PostgreSQL: rds.force_ssl=1 in the AWS RDS Console (Parameter Groups)
   * MySQL: Within the DB: GRANT USAGE ON *.* TO 'mysqluser'@'%' REQUIRE SSL;
+* Microsoft SQL Server: supports Transparent Data Encryption (TDE)
 
 ## S3
 
@@ -67,6 +68,7 @@
 * Relies on CloudFormation
 * Optimization: Package dependencies into source code to avoid EC2 to resolve them
 * 1 environment runs 1 app version
+* Use Packer to create your own customize machine images
 
 ## CICD
 
@@ -147,6 +149,7 @@
   * update-project
   * start-build
   * batch-get-builds
+  * Use the buildspecOverride property
 
 ## CodeDeploy
 
@@ -174,6 +177,7 @@
   * Target Revision: Application version
 * appspec.yml
   * Must be in the root folder
+  * For Lambda: Need to specify the version and function as validation tests
   * Sections
     * File Section: How to source and copy from repository
     * Hooks: Instructions to deploy
@@ -305,8 +309,11 @@
     * OK
     * INSUFFICIENT_DATA
     * ALARM
-  * Period
-    * High resolution period to trigger [10sec -30sec]
+  * Properties
+    * Evaluation Period
+    * Datapoint to Alarm
+    * Period
+      * High resolution period to trigger [10sec -30sec]
 
 ### AWS X-Ray
 
@@ -493,6 +500,8 @@
   * Pointers to Lambda versions
   * Mutable
   * Enable weight traffic to new versions
+* Lambda@Edge use to customize CloudFront content
+* If requires access to VPC resurces, the SubnetID and Security Group ID must be mentioned
 * Best practices
   * Heavy-duty outside function handler
     * Connection to DB
@@ -508,16 +517,17 @@
 ## DynamoDB
 
 * Fully managed NoSQL Serverless Database
-* Scales horizotally
+* Scales horizontally
 * All data is present in one row
 * High available with replication across 3 AZ
 * Support millions of requests/sec and TB storage
 * Low latency
 * Enable event driver programming with DynamoDB Streams
+* Support TTL for Item to reduce storage usage
 * Tables
   * Primary Key (decided at time creation)
   * Tables can have infinite items (rows)
-  * Itimes has attributes (can be added over time)
+  * Items has attributes (can be added over time)
   * Maximum item size is 400KB
   * Data types
     * Scalar: String, Number, Binary, Boolean, Null
@@ -535,15 +545,15 @@
       * 1 write/sec
       * Item of 1 KB
     * Formula = (write/WCU=[1])/sec * (Size/1KB)
-    * It need to round size (up) to a multiple of 1KB
+    * It needs to round size (up) to a multiple of 1KB
   * RCU: Read
     * 1 RCU is equivalent to
       * 1 read/sec (strongly consistent)
       * 2 read/sec (eventually consistent)
       * Item size 4KB
     * Formula = (read/RCU=[1,2])/sec * (Size/4KB)
-    * It need to round size (up) to a multiple of 4KB
-* Data is divided in partitons
+    * It needs to round size (up) to a multiple of 4KB
+* Data is divided in partitions
   * Number of partitions
     * By Capacity: (TOTAL RCU / 3000) + (Total WCU / 1000)
     * By Size: (TOTAL SIZE / 10 GB)
@@ -551,7 +561,7 @@
   * WCU/RCU are spread evenly between partitions
 * Throttling
   * If RCU/WCI are exceeded, get an error ____ProvisionedThroughputExceededException__
-  * It happens becuase: Hot keys, Hot partitions, Very large items
+  * It happens as a result of: Hot keys, Hot partitions, Very large items
   * Solutions
     * Exponential back-off
     * Distribute partitions
@@ -560,19 +570,19 @@
   * PutItem
   * UpdateItem
     * Conditional Writes: Only if conditions are respected
-  * DeleteItem
-    * Individual row
-    * Conditional delete
-  * DelteTable
-  * BatchWriteItem
-    * Up to 25 PutItem / DeleteItel
-    * Up to 16MB
-    * Up to 400KB of data per item
-    * Operations are donde in parallel
-    * Up to user to rety faile updates
   * GetItem
     * Option to use strongly consistent
     * __ProjectionExpression__ can be used to obtain only certain attributes
+  * DeleteItem
+    * Individual row
+    * Conditional delete
+  * DeleteTable
+  * BatchWriteItem
+    * Up to 25 PutItem / DeleteItem
+    * Up to 16MB
+    * Up to 400KB of data per item
+    * Operations are done in parallel
+    * Up to user to retry failed updates
   * BathGetItem
     * Up to 100 item
     * Up to 16 MB
@@ -625,7 +635,7 @@
 * Security
   * VPC Endpoints available
   * Controlled by IAM
-  * Encryption at rest using KMS
+  * Encryption at rest using KMS (defined at table creation)
   * Encryption in transit using SSL / TLS
 * Backups and Restore features
   * No performance impact
@@ -646,6 +656,9 @@
 * Transform/Validate requests/responses
 * Cache API responses
 * Changes must be deployed to "Stages"
+* To Modify behavior of
+  * Front-End edit the Method request/response
+  * Back-End edit Integration request/response
 * Stages
   * Environments
   * Variables
@@ -697,7 +710,7 @@
   * IAM Permissions
     * Sig v4: Authorize User/Rol to access API Gateway
   * Lambda Authorizer (Custom Authorizer)
-    * Use Lambda to validate toker in header
+    * Use Lambda to validate token in header
     * Option to cache result of authentication
     * Pey per Lambda invocation
     * Help to use OAuth / SAML / 3rd party authentication
@@ -709,9 +722,9 @@
 
 * Product Types
   * Cognito User Pools (CUP)
-    * Sign in functionality for app users
+    * Sign-in functionality for app users
     * Integrated with API Gateway
-    * Serverless database of users
+    * Serverless database of users and profiles
     * Can enable Federated Identities (Facebook/Google/SAML)
     * Sends back a JSON Web Token (JWT)
   * Cognito Identity Pools (Federated Identity)
@@ -719,10 +732,11 @@
     * Integrated with Cognito User Pools
   * Cognito Sync
     * Synchronize data from device to Cognito
-    * Deprecated and replace by AppSync
+    * Deprecated and replaced by AppSync
     * Requires Federates Identity Pool (not User Pool)
     * Store data in datasets (Up to 1MB)
     * Up to 20 dataset to synchronize
+    * Gives control and insight into data stored in Cognito
 
 ## SAM (Serverless Application Model)
 
@@ -753,7 +767,7 @@
   * Create/Rotate/Disable/Enable
   * Types of CMK
     * AWS Managed Service Default CMK: free
-    * User Kery created in KMS: $1/month
+    * User Keys created in KMS: $1/month
     * User Keys imported (256-bit symetic key): $1/month
   * Pay for API call to KMS ($0.03/1k calls)
   * API
@@ -846,8 +860,14 @@
     * Lazy Loading: After a cache missed, app write data to the cache
     * Write Through: After every change in data, the cache is updated also
     * Adding TTL: Add a TTL in the cache
+  * Redis: Leaderboards
+  * Memcached
 * Redshift: OLAP
   * Analytic
   * Data Warehousing / Data Lake
 * Neptune: Graph DB
 * DMS: Database Migration Service
+
+### AWS CodeStart
+* Manage full cycle of project
+* Develop, Build, Deploy
