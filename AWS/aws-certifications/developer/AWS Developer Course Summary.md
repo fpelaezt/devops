@@ -8,6 +8,7 @@
 * [Amazon Instances review](https://ec2instances.info/)
 * Instance Meta-Data: http://169.254.169.254/latest/meta-data/
 * [Monthly Calculator](https://calculator.s3.amazonaws.com/index.html)
+* [FAQ](https://aws.amazon.com/ec2/faqs/)
 
 ## RDS
 
@@ -15,6 +16,7 @@
   * PostgreSQL: rds.force_ssl=1 in the AWS RDS Console (Parameter Groups)
   * MySQL: Within the DB: GRANT USAGE ON *.* TO 'mysqluser'@'%' REQUIRE SSL;
 * Microsoft SQL Server: supports Transparent Data Encryption (TDE)
+* [FAQ](https://aws.amazon.com/rds/faqs/)
 
 ## S3
 
@@ -36,6 +38,7 @@
 * Limits
   * Bucket: unlimited
   * File: 5TB
+* [FAQ](https://aws.amazon.com/s3/faqs/)
 
 ## Policies
 
@@ -69,6 +72,7 @@
 * Optimization: Package dependencies into source code to avoid EC2 to resolve them
 * 1 environment runs 1 app version
 * Use Packer to create your own customize machine images
+* [FAQ](https://aws.amazon.com/elasticbeanstalk/faqs/)
 
 ## CICD
 
@@ -101,6 +105,7 @@
     * Trigger for pull request updates
     * Commit comments events
     * Goes into an SNS topic
+* [FAQ](https://aws.amazon.com/codecommit/faqs/)
 
 ## CodePipeline
 
@@ -109,6 +114,7 @@
 * Each stage contains a set of actions
 * Changes are recorded into AWS CloudWatch Events (can trigger SNS)
 * IAM Service Role must have appropriate permissions
+* [FAQ](https://aws.amazon.com/codepipeline/faqs/)
 
 ## CodeBuild
 
@@ -150,6 +156,7 @@
   * start-build
   * batch-get-builds
   * Use the buildspecOverride property
+* [FAQ](https://aws.amazon.com/codebuild/faqs/)
 
 ## CodeDeploy
 
@@ -202,6 +209,7 @@
   * Set of tagged EC2 instances
   * Directly to an ASG
   * Mix (Tag/ASG)
+* [FAQ](https://aws.amazon.com/codedeploy/faqs/)
 
 ## CloudFormation
 
@@ -266,6 +274,7 @@
 * Rollback
   * Default: everything rolls back (gets deleted). Can be disabled
   * If stack update fails, it rolls back to the previous state. Can be disabled
+* [FAQ](https://aws.amazon.com/cloudformation/faqs/)
 
 ## Monitoring
 
@@ -314,6 +323,7 @@
     * Datapoint to Alarm
     * Period
       * High resolution period to trigger [10sec -30sec]
+* [FAQ](https://aws.amazon.com/cloudwatch/faqs/)
 
 ### AWS X-Ray
 
@@ -341,11 +351,13 @@
   * Uses an IAM Role with policy AWSX-RayWriteOnlyAccess
 * Enable on Elastic Beanstalk
   * Create an xray-deamon.config in the .ebextensions folder
+* [FAQ](https://aws.amazon.com/xray/faqs/)
 
 ### AWS CloudTrail
 
 * Audit API calls
 * If a resource is deleted, look into CloudTrail first
+* [FAQ](https://aws.amazon.com/cloudtrail/faqs/)
 
 ## AWS Integration & Messaging
 
@@ -411,6 +423,7 @@
   * Batch APIs
     * SendMessage | DeleteMessage | ChangeMessageVisibility
   * Support Java Message Service (JMS)
+* [FAQ](https://aws.amazon.com/sqs/faqs/)
 
 ### SNS
 
@@ -419,7 +432,8 @@
 * 100k topics
 * Fan Out
   * Push to one SNS, receive in many SQS
-  
+* [FAQ](https://aws.amazon.com/sns/faqs/)
+
 ### AWS Kinesis
 
 * Alternative to Apache Kafka
@@ -460,6 +474,7 @@
 * Security
   * Encrytion at rest is available
   * VPC endpoints available
+* [FAQ](https://aws.amazon.com/kinesis/data-streams/faqs/)
 
 ## AWS Lambda
 
@@ -513,6 +528,7 @@
   * Minimize deployment package
   * Don't use recursive code
   * Don't put in a VPC unless needed
+* [FAQ](https://aws.amazon.com/lambda/faqs/)
 
 ## DynamoDB
 
@@ -644,6 +660,7 @@
   * Multi region, fully replicated, high performance
 * Amazon DMS to migrate to DynamoDB
 * A local DynamoDB can be launch in the computer for testing
+* [FAQ](https://aws.amazon.com/dynamodb/faqs/)
 
 ## API Gateway
 
@@ -717,6 +734,7 @@
   * Cognito
     * Manage user lifecycle
     * Only help with authentication (not authorization)
+* [FAQ](https://aws.amazon.com/api-gateway/faqs/)
 
 ## AWS Cognito
 
@@ -737,6 +755,7 @@
     * Store data in datasets (Up to 1MB)
     * Up to 20 dataset to synchronize
     * Gives control and insight into data stored in Cognito
+* [FAQ](https://aws.amazon.com/cognito/faqs/)
 
 ## SAM (Serverless Application Model)
 
@@ -753,6 +772,7 @@
     * aws cloudformation package / sam package
     * aws cloudformation deploy / sam deploy
 * [SAM Examples](https://github.com/awslabs/serverless-application-model/tree/master/examples/apps)
+* [FAQ](https://aws.amazon.com/serverless/sam/faqs/)
 
 ## AWS Security
 
@@ -804,6 +824,7 @@
 * Improve read performance
 * Around 136 Point of Presence (edge location)
 * Support RTMP Protocol
+* [FAQ](https://aws.amazon.com/cloudfront/faqs/)
 
 ### AWS Step Functions
 
@@ -812,6 +833,7 @@
 * Features: sequence, parallel, conditions, timeouts, error handling
 * Can also integrate with EC2, API Gateway
 * Maximum execution time: 1 year
+* [FAQ](https://aws.amazon.com/step-functions/faqs/)
 
 ### AWS Simple Workflow Service (SWF)
 
@@ -819,6 +841,7 @@
 * Code run on EC2 (not serverless)
 * Older than Step Functions ()
 * Used over Setp Functions only if external signals or child processes are needed
+* [FAQ](https://aws.amazon.com/swf/faqs/)
 
 ### AWS ECS (Elastic Container Service)
 
@@ -848,6 +871,7 @@
         * __ECS_ENGINE_AUTH_DATA__:  Pull images from private registries
         * __ECS_AVAILABLE_LOGGING_DRIVERS__: CloudWatch container loggin
         * __ECS_ENABLE_TASK_IAM_ROLE__: Enable IAM roles for ECS tasks
+* [FAQ](https://aws.amazon.com/ecs/faqs/)
 
 ### AWS Databases
 
@@ -871,3 +895,4 @@
 ### AWS CodeStart
 * Manage full cycle of project
 * Develop, Build, Deploy
+* [FAQ](https://aws.amazon.com/codestar/faqs/)
