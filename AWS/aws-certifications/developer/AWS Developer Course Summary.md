@@ -105,6 +105,7 @@
     * Trigger for pull request updates
     * Commit comments events
     * Goes into an SNS topic
+* Billing: Pay USD$1 per user
 * [FAQ](https://aws.amazon.com/codecommit/faqs/)
 
 ## CodePipeline
