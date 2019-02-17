@@ -40,11 +40,6 @@
   * File: 5TB
 * [FAQ](https://aws.amazon.com/s3/faqs/)
 
-## Policies
-
-* [Policy Generator](https://awspolicygen.s3.amazonaws.com/policygen.html)
-* [Simulator](https://policysim.aws.amazon.com/home/index.jsp?#)
-
 ## SDK
 
 * Exponential Backoff: After an API failure, the SDK retries waiting an exponential curve
@@ -59,18 +54,20 @@
 * Deployments Options
   * All at once: fastest, downtime, no additional cost
   * Rolling: few instances at a time (called bucket), less capacity, run both versions, no additional cost
-  * Rolling with additional batches: spins up new instances, run both versions, additional cost
-  * Immutable: spins up new instances in a new ASG, only one version
+  * Rolling with additional batches: spins up new instances, run both versions, additional cost, full capacity all time
+  * Immutable: spins up new instances in a new ASG, only one version, double capacity for a short time
   * Blue/Green: Need manual intervention, similar to Immutable, Route S3 to weighted traffic
 * Code:
   * Must be in Zip
   * Can contain parameters (.ebextrensions/) .config in YAML/JSON format in root
   * Can modify default setting by option_settings
+  * Use cron.yaml to perform periodic proceses
 * EB cli:
   * eb [create | status | health | events | logs | open | deploy | config | terminate]
 * Relies on CloudFormation
 * Optimization: Package dependencies into source code to avoid EC2 to resolve them
 * 1 environment runs 1 app version
+* Use version lifecycle to avoid reaching the version limit
 * Use Packer to create your own customize machine images
 * [FAQ](https://aws.amazon.com/elasticbeanstalk/faqs/)
 
@@ -115,6 +112,9 @@
 * Each stage contains a set of actions
 * Changes are recorded into AWS CloudWatch Events (can trigger SNS)
 * IAM Service Role must have appropriate permissions
+* Multiaccount access
+  * Create a Customer Master Key in KMS
+  * Set policy and role to enable Cross-Account access
 * [FAQ](https://aws.amazon.com/codepipeline/faqs/)
 
 ## CodeBuild
@@ -125,7 +125,7 @@
 * Security
   * Uses KMS to encrypt artifacts
   * Uses IAM to build
-  * Uses VPN to network
+  * Uses VPC to network
   * Uses CloudTrail for API logging
 * Components
   * Project: Define how AWS runs a build
@@ -133,7 +133,7 @@
   * Specs: buildspec.yml contains Build commands
 * Output logs to S3 and CloudWatch
 * CodeBuild Statistics to see metrics
-* Uses CloudWatch Alarms to detect failed build and trigger notifications
+* Uses CloudWatch Alarms to detect failed builds and trigger notifications
 * Can use CloudWatch Events / AWS Lambda
 * Can trigger SNS Notifications
 * Support: Java, Ruby, Python, Go, Node.js, Android, .NET Core, PHP, Docker (extend environment)
@@ -194,6 +194,7 @@
         * ApplicationStop
         * DownloadBundle
         * BeforeInstall
+        * Install
         * AfterInstall
         * ApplicationStart
         * __ValidateService__
@@ -401,6 +402,7 @@
   * De-deplication interval 5 min
   * Message GroupID allows to group. Extra tag
   * Only one worker per group
+  * Must be defined at queue creation
 * Advance Concepts
   * SQS Extended Client
     * Allows to send large messages
@@ -449,6 +451,7 @@
   * Load streams into S3, Readshift, ElasticSearch
   * Near real-time (60ms)
   * Pay for the conversion and amount of data
+  * Can invoke lambda to transform info before storing
 * Stream are divided in ordered Shards / Partitions
 * Default retention 1 day, Up to 7 days
 * Ability to reprocess / replay data (go back in time)
@@ -459,7 +462,7 @@
   * 2MB/s at read per shard
   * Billed per shard
   * Batching available
-  * Records are ordered per shard
+  * Records are ordered only per shard
   * Number of shard can change (reshard / merge)
 * Put Records
   * __PutRecord__ API + Partition Key
@@ -473,7 +476,7 @@
     * Uses DynamoDB to checkpoint offsets
     * Uses DynamoDB to track other workers and share work among shards
 * Security
-  * Encrytion at rest is available
+  * Encrytion at rest is available using KMS
   * VPC endpoints available
 * [FAQ](https://aws.amazon.com/kinesis/data-streams/faqs/)
 
@@ -485,7 +488,7 @@
 * Scaling is automated
 * Pay per request and compute time. See [Pricing](https://aws.amazon.com/lambda/pricing/?nc1=h_ls)
 * Free Tier: 1 million and 400.000 GB seconds of compute time
-* Easy monitoring with CloudWatch Logs
+* Easy monitoring with CloudWatch Logs (integrated with debug statements)
 * Easy to get more resources per function
 * Support: Node.js, Python, Java, C#, Goland, .NET
 * Configuration
@@ -499,7 +502,9 @@
   * Each extra invocation trigger a __Throttle__
     * syncrhonous invocation: return __ThrottleError__ - 429
     * asyncrhonous invocation: retry automatically twice and then go to DLQ
-* DLQ types: SNS topic or SQS queue
+* DLQ
+  * Used to debug asynchronous functions
+  * SNS topic or SQS queue
 * Limits
   * Time: Default 3 sec, up to 900 sec (15 min)
   * Memory: 128M to 3G (3008MB) - 64MB increments
@@ -515,7 +520,7 @@
 * Aliases
   * Pointers to Lambda versions
   * Mutable
-  * Enable weight traffic to new versions
+  * Enable weight traffic to new versions (Create and Update -routing-config paramater)
 * Lambda@Edge use to customize CloudFront content
 * If requires access to VPC resurces, the SubnetID and Security Group ID must be mentioned
 * Best practices
@@ -527,6 +532,7 @@
     * Connections strings, S3 buckets
     * Sensitive values must be encrypted
   * Minimize deployment package
+    * For Java or .NET select only the required libraries
   * Don't use recursive code
   * Don't put in a VPC unless needed
 * [FAQ](https://aws.amazon.com/lambda/faqs/)
@@ -541,6 +547,7 @@
 * Low latency
 * Enable event driver programming with DynamoDB Streams
 * Support TTL for Item to reduce storage usage
+* Ideal to store JSON information
 * Tables
   * Primary Key (decided at time creation)
   * Tables can have infinite items (rows)
@@ -652,6 +659,7 @@
 * Security
   * VPC Endpoints available
   * Controlled by IAM
+  * Using IAM table item or attributes can be hidden
   * Encryption at rest using KMS (defined at table creation)
   * Encryption in transit using SSL / TLS
 * Backups and Restore features
@@ -675,8 +683,8 @@
 * Cache API responses
 * Changes must be deployed to "Stages"
 * To Modify behavior of
-  * Front-End edit the Method request/response
-  * Back-End edit Integration request/response
+  * Front-End edit the Method request/response, eg: XML<=>JSON
+  * Back-End edit Integration request/response, eg: Databases
 * Stages
   * Environments
   * Variables
@@ -710,7 +718,7 @@
   * X-Ray
 * CORS
   * Cross Origin Resource Sharing
-  * Enable to other domains
+  * Enable calls from other domains
   * OPTIONS pre-flight request must contain these headers
     * __Access-Control-Allow-Methods__
     * __Access-Control-Allow-Headers__
@@ -746,9 +754,11 @@
     * Serverless database of users and profiles
     * Can enable Federated Identities (Facebook/Google/SAML)
     * Sends back a JSON Web Token (JWT)
+    * Optional MFA available
   * Cognito Identity Pools (Federated Identity)
     * Provides AWS credentials to user to access AWS resources directly
     * Integrated with Cognito User Pools
+    * Can use unauthenticated identities
   * Cognito Sync
     * Synchronize data from device to Cognito
     * Deprecated and replaced by AppSync
@@ -763,6 +773,7 @@
 * Framework for developing and deploying SAM
 * Config are YAML files
 * Support CloudFormation components
+* Lambda Code must be in root directory along with YAML file
 * YAML
   * Header: Transform: 'AWS::Serverless-2015-10-31'
   * Helpers:
@@ -810,18 +821,29 @@
   * Notification with CloudWatch Events
   * Integration with CloudFormation
   * Organized by Hierarchy
+  * aws ssm get-paramaters --with-decription
 
 * STS
   * Security Token Service
   * AssumeRole API
   * Temporaty credentials [15m - 1 h]
+  * Uses Tokens not Access Keys
   * Use mainly for Users. For application use Access-Keys
+  * Use CLI sts decode-authorization-message to decode errors
+
+* Policies
+  * [Policy Generator](https://awspolicygen.s3.amazonaws.com/policygen.html)
+  * [Simulator](https://policysim.aws.amazon.com/home/index.jsp?#)
+  * CLI Simulator
+    * Get context keys
+    * Use aws iam simulate-custom-policy
 
 ## Other AWS Services
 
 ### AWS CloudFront
 
 * Content Delivery Network (CDN)
+* Use with front-end tier
 * Improve read performance
 * Around 136 Point of Presence (edge location)
 * Support RTMP Protocol
@@ -853,6 +875,7 @@
   * EKS: Running ECS on Kubernetes (EC2)
   * ECR: Docker Container Registry
 * IAM and roles at the ECS task level
+* Security Groups and ACL's controls traffic
 * Use Cases: microservices, batch processing, migrate apps
 * Concepts
   * ECS Cluster
@@ -885,7 +908,7 @@
     * Lazy Loading: After a cache missed, app write data to the cache
     * Write Through: After every change in data, the cache is updated also
     * Adding TTL: Add a TTL in the cache
-  * Redis: Leaderboards
+  * Redis: Leaderboards, high availability
   * Memcached
 * Redshift: OLAP
   * Analytic
@@ -894,6 +917,7 @@
 * DMS: Database Migration Service
 
 ### AWS CodeStart
+
 * Manage full cycle of project
 * Develop, Build, Deploy
 * [FAQ](https://aws.amazon.com/codestar/faqs/)
