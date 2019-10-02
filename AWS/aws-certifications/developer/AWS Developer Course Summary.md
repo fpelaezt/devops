@@ -1,9 +1,6 @@
 # Ultimate AWS Certified Developer Associate 2019 - Summary
 
-## Table of Contents
-
 - [Ultimate AWS Certified Developer Associate 2019 - Summary](#ultimate-aws-certified-developer-associate-2019---summary)
-  - [Table of Contents](#table-of-contents)
   - [EC2](#ec2)
   - [RDS](#rds)
   - [S3](#s3)
@@ -53,7 +50,7 @@
   - PostgreSQL: rds.force_ssl=1 in the AWS RDS Console (Parameter Groups)
   - MySQL: Within the DB: GRANT USAGE ON *.* TO 'mysqluser'@'%' REQUIRE SSL;
 - Microsoft SQL Server: supports Transparent Data Encryption (TDE)
-- Used when complex joins are need
+- Used when complex joins are needed
 - [FAQ](https://aws.amazon.com/rds/faqs/)
 
 ## S3
@@ -103,7 +100,7 @@
   - List of packages names in YAML/JSON to be installed
   - Files to install in the .ebextensions in your Application Source Bundle
   - Can modify default setting by option_settings
-  - Use cron.yaml to perform periodic proceses
+  - Use cron.yaml to perform periodic processes
 - EB cli:
   - eb [create | status | health | events | logs | open | deploy | config | terminate]
 - Relies on CloudFormation
@@ -439,7 +436,7 @@
   - Queue names must end with .fifo
   - Messages are processed in order and only once
   - Not available in all regions
-  - Lower throughput 3k/sec with batching, 300/s without
+  - Lower throughput 3k/sec with batching 300/s without
   - No per message delay (only per queue)
   - De-deplication interval 5 min
   - Message GroupID allows to group. Extra tag
@@ -448,7 +445,7 @@
 - Advance Concepts
   - SQS Extended Client
     - Allows to send large messages
-    - Use S3 to store the message
+    - Use S3 to store messages
   - Security
     - HTTPS for in flight
     - SSE
@@ -473,7 +470,7 @@
 ### SNS
 
 - Producer send one message to the topic
-- Up to 10 million subscriber per topic
+- Up to 10 million subscribers per topic
 - 100k topics
 - Fan Out
   - Push to one SNS, receive in many SQS
@@ -505,7 +502,7 @@
   - Billed per shard
   - Batching available
   - Records are ordered only per shard
-  - Number of shard can change (reshard / merge)
+  - Number of shards can change (reshard / merge)
 - Put Records
   - __PutRecord__ API + Partition Key
   - Same key goes to same partition
@@ -514,7 +511,7 @@
   - If gets error __ProvisionedThroughputExceeded__ when limits exceded
 - Consumers
   - Normal consumer: CLI, SDK, etc
-  - Kinesis Clien Library (Java, Node, Python, Ruby, .NET)
+  - Kinesis Client Library (Java, Node, Python, Ruby, .NET)
     - Uses DynamoDB to checkpoint offsets
     - Uses DynamoDB to track other workers and share work among shards
 - Security
@@ -570,7 +567,7 @@
     - Connection to DB
     - Initialize AWS SDK
     - Pull it dependencies
-  - Environment varialbes
+  - Environment variables
     - Connections strings, S3 buckets
     - Sensitive values must be encrypted
   - Minimize deployment package
@@ -601,7 +598,7 @@
     - Set: String, Number, Binary
 - Primary Key
   - Option 1: Partition Key (Use to distribute data). Similar to SQL tables
-  - Option 2: Partition Key + Sort Key (Combiation must be unique)
+  - Option 2: Partition Key + Sort Key (Combination must be unique)
 - Provisioned Throughput (Capacity Units)
   - Can be exceeded using "burst credit"
   - If "burst credit" is empty, you'll get error __ProvisionedThroughputException__
@@ -933,7 +930,7 @@
     - Config file
       - /etc/ecs/ecs.config
         - __ECS_CLUSTER__: Assign EC2 to ECS cluster
-        - __ECS_ENGINE_AUTH_DATA__:  Pull images from private registries
+        - __ECS_ENGINE_AUTH_DATA__: Pull images from private registries
         - __ECS_AVAILABLE_LOGGING_DRIVERS__: CloudWatch container loggin
         - __ECS_ENABLE_TASK_IAM_ROLE__: Enable IAM roles for ECS tasks
 - [FAQ](https://aws.amazon.com/ecs/faqs/)
