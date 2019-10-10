@@ -212,6 +212,10 @@
 - Support any application
 - Support Blue/Green deployment on EC2 servers
 - Don't provision resources
+- Deployment parameters
+  - Revision
+  - Deployment group
+  - Deployment configuration (optional)
 - Components
   - Application: unique name
   - Compute platform: EC2/On-Premise or Lambda
@@ -229,7 +233,7 @@
     - File Section: How to source and copy from repository
     - Hooks: Instructions to deploy
       - Have timeouts
-      - Order
+      - Order (Deployment 132Lifecycle events)
         - ApplicationStop
         - DownloadBundle
         - BeforeInstall
@@ -248,7 +252,7 @@
   - Rollback: re-deploy old deployment or enable automated rollback
 - Deployment targets
   - Set of tagged EC2 instances
-  - Directly to an ASG
+  - Directly to an ASG even for new instances
   - Mix (Tag/ASG)
 - [FAQ](https://aws.amazon.com/codedeploy/faqs/)
 
@@ -265,9 +269,9 @@
   - Automatic: Edit YAML file and CLI
 - Blocks
   - Resources (Mandatory)
-  - Parameters: dynamic inputs
+  - Parameters: dynamic inputs (Up to 60)
   - Mappings: static variables
-  - Outputs
+  - Outputs (Up to 60)
   - Conditionals
   - Metadata
 - Helpers
@@ -396,7 +400,7 @@
 
 ### AWS CloudTrail
 
-- Audit API calls
+- Audit API calls per Region
 - If a resource is deleted, look into CloudTrail first
 - [FAQ](https://aws.amazon.com/cloudtrail/faqs/)
 
@@ -431,12 +435,12 @@
   - Redrive Policy: Send to a DLQ when visibility timeout has exceeded a threshold
 - Long Polling
   - From 1 to 20* seconds
-  - Use __WaitTimeSeconds__ to overwirte queue configuration
+  - Use __WaitTimeSeconds__ to overwrite queue configuration
 - FIFO Queue
   - Queue names must end with .fifo
   - Messages are processed in order and only once
   - Not available in all regions
-  - Lower throughput 3k/sec with batching 300/s without
+  - Lower throughput 3k/sec with batching, 300/s without
   - No per message delay (only per queue)
   - De-deplication interval 5 min
   - Message GroupID allows to group. Extra tag
