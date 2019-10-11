@@ -195,7 +195,7 @@
   - update-project
   - start-build
   - batch-get-builds
-  - Use the buildspecOverride property
+  - Use AWS-CLI the buildspecOverride property to set a new buildspec.yml
 - [FAQ](https://aws.amazon.com/codebuild/faqs/)
 
 ## CodeDeploy
@@ -559,6 +559,7 @@
 - Versions
   - Code + Configuration
   - Versions are inmutable
+  - A unique ARN is assigned
   - $LATEST: Current
 - Aliases
   - Pointers to Lambda versions
@@ -704,6 +705,7 @@
   - Using IAM: a table item or attributes can be hidden
   - Encryption at rest using KMS (defined at table creation)
   - Encryption in transit using SSL / TLS
+  - Uses Tables Keys with AWS owned CMK (free) or AWS Managed CMK (chargeable)
 - Backups and Restore features
   - No performance impact
   - Point in time restore like RDS
@@ -719,6 +721,7 @@
 - Handle different environments
 - Handle security (AA)
 - Handle throttling
+- Can deny access using WAF / Resource Policies
 - Create API keys
 - Integration with Swagger / Open API to import APIs
 - Transform/Validate requests/responses
@@ -816,12 +819,18 @@
 - Config are YAML files
 - Support CloudFormation components
 - Lambda Code must be in root directory along with YAML file
+- Deployment Patterns
+  - Canary10Percent5Minutes (Initial 10%, the rest after 5 min)
+  - Linear10PercentEvery1Minute
+  - AllAtOnce
 - YAML
   - Header: Transform: 'AWS::Serverless-2015-10-31'
   - Helpers:
     - 'AWS::Serverless::Function' (Lambda)
+    - 'AWS::Serverless::LayerVersion' (Lambda Layered)
     - 'AWS::Serverless::Api' (API Gateway)
-    - 'AWS::Serverless::SimpeTable' (DynamoDB)
+    - 'AWS::Serverless::SimpleTable' (DynamoDB)
+    - 'AWS::Serverless::Application' (S3)
   - Package & Deploy
     - aws cloudformation package / sam package
     - aws cloudformation deploy / sam deploy
@@ -838,6 +847,9 @@
   - Fully integrated with IAM
   - KMS can only encrypt 4KB of data per call
   - If data > 4KB use envelope encryption
+  - Envelop
+    - Data is encrypted using a plaintext Data Key
+    - Data Key is encrypted using a plaintext Master Key
   - Create/Rotate/Disable/Enable
   - Types of CMK
     - AWS Managed Service Default CMK: free
@@ -893,7 +905,7 @@
 
 ### AWS Step Functions
 
-- Build serverless visual workflows to orchestrate Lambda functions
+- Build serverless visual workflows to orchestrate Lambda functions / microservices
 - Represent flow as JSON state machine
 - Features: sequence, parallel, conditions, timeouts, error handling
 - Can also integrate with EC2, API Gateway
@@ -910,7 +922,7 @@
 
 ### AWS ECS (Elastic Container Service)
 
-- Help to run Docker containers on EC2 machines
+- Help to run/orchestrate Docker containers on EC2 machines
 - Components
   - ECS Core: Running ECS on EC2 instances
   - Fargate: Running ECS tasks (serverless)
@@ -946,12 +958,21 @@
 - DynamoDB: NoSQL
 - ElasticCache
   - In memory DB
+  - Perfect solution for storing User Sessions
+  - Multiple AZ's
   - Strategies
     - Lazy Loading: After a cache missed, app writes data to the cache
     - Write Through: After every change in data, the cache is also updated
     - Adding TTL: Add a TTL in the cache
-  - Redis: Leaderboards, high availability
   - Memcached
+    - Multithreaded performance
+    - Simple data types
+  - Redis
+    - Advance data structures
+    - Leaderboards
+    - Multiple Replicas - High Availability
+    - Snapshots
+    - Pub/Sub capability
 - Redshift: OLAP
   - Analytic
   - Data Warehousing / Data Lake
