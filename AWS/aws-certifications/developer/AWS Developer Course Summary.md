@@ -107,7 +107,7 @@
 - Optimization: Package dependencies into source code to avoid EC2 to resolve them
 - 1 environment runs 1 app version
 - Use version lifecycle to avoid reaching the version limit
-- Use Packer to create your own customize machine images
+- Use Packer to create your own customized machine images
 - [FAQ](https://aws.amazon.com/elasticbeanstalk/faqs/)
 
 ## CICD
@@ -447,6 +447,7 @@
   - Only one worker per group
   - Must be defined at queue creation
 - Advance Concepts
+  - Cost Allocation Tags
   - SQS Extended Client
     - Allows to send large messages
     - Use S3 to store messages
@@ -566,7 +567,11 @@
   - Mutable
   - Enable weight traffic to new versions (Create and Update -routing-config paramater)
 - Lambda@Edge use to customize CloudFront content
-- If requires access to VPC resurces, the SubnetID and Security Group ID must be mentioned
+- If requires access to VPC resources, the SubnetID and Security Group ID must be mentioned
+- Parts
+  - FunctionName
+  - Layers
+  - Handler
 - Best practices
   - Heavy-duty outside function handler
     - Connection to DB
@@ -713,6 +718,7 @@
   - Multi region, fully replicated, high performance
 - Amazon DMS to migrate to DynamoDB
 - A local DynamoDB can be launch in the computer for testing
+- Decrease pagesize to reduce throttling
 - [FAQ](https://aws.amazon.com/dynamodb/faqs/)
 
 ## API Gateway
@@ -736,6 +742,12 @@
     - Similar to env vars to change configuration
     - Are passed to the __context__ of Lambda
     - Use Case: point to different Lambda Alias
+    - Passed as
+    - A full URI without protocol = http: //$stageVariables.< variable_name >
+    - A full domain = http ://$stageVariables.< variable_name >/resource/operation
+    - A subdomain = http ://$stageVariables.< variable_name >.example.com/resource/operation
+    - A path = http ://example.com/$stageVariables.< variable_name >/bar
+    - A query string = http ://example.com/foo?q=$stageVariables.< variable_name >
 - URL
   - https://xxx.yyy/resource/stage (eg:. /chapters/dev)
 - Canary Deployment
@@ -811,6 +823,7 @@
     - Store data in datasets (Up to 1MB)
     - Up to 20 dataset to synchronize
     - Gives control and insight into data stored in Cognito
+- Use Cognito Streams to analyze data stored in Amazon Cognito
 - [FAQ](https://aws.amazon.com/cognito/faqs/)
 
 ## SAM (Serverless Application Model)
