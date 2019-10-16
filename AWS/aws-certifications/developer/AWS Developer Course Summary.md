@@ -97,7 +97,8 @@
   - Immutable: spins up new instances in a new ASG, only one version, double capacity for a short time
   - Blue/Green: Need manual intervention, similar to Immutable, Route S3 to weighted traffic
 - Code:
-  - Must be in Zip
+  - Must be in Zip or WAR
+  - Up to 512MB
   - Can contain parameters (.ebextensions/) .config in YAML/JSON format in root
   - List of packages names in YAML/JSON to be installed
   - Files to install in the .ebextensions in your Application Source Bundle
@@ -690,7 +691,7 @@
       - ALL
     - Must define RCU/WCU for index
     - Possibility to add/modify GSI (not LSI)
-    - Allow query entire table, accros all partitions
+    - Allow query entire table, across all partitions
 - Concurrency
   - Optimistic locking / concurrency database
 - DAX
@@ -737,6 +738,7 @@
 - Transform/Validate requests/responses
 - Cache API responses
 - Changes must be deployed to "Stages"
+- Use Binary Payloads for non-text request/response
 - To Modify behavior of:
   - Front-End edit the Method request/response, eg: XML<=>JSON
   - Back-End edit Integration request/response, eg: Databases
@@ -848,7 +850,7 @@
   - Linear10PercentEvery1Minute
   - AllAtOnce
 - YAML
-  - Header: Transform: 'AWS::Serverless-2015-10-31'
+  - Header: Transform: 'AWS::Serverless-2016-10-31'
   - Helpers:
     - 'AWS::Serverless::Function' (Lambda)
     - 'AWS::Serverless::LayerVersion' (Lambda Layered)
