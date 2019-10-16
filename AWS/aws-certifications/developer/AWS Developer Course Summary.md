@@ -75,6 +75,8 @@
 - Limits
   - Bucket: unlimited
   - File: 5TB
+  - Use a random prefix to increse transactions per seconds
+    - examplebucket/232a-2019-10-16/photo1.jgp
 - [FAQ](https://aws.amazon.com/s3/faqs/)
 
 ## SDK
@@ -492,7 +494,7 @@
 - Kinesis Analytics
   - Real-time analytics using SQL
 - Kinesis Firehose
-  - Load streams into S3, Readshift, ElasticSearch
+  - Load streams into S3, Readshift, ElasticSearch, Splunk
   - Near real-time (60ms)
   - Pay for the conversion and amount of data
   - Can invoke lambda to transform info before storing
@@ -619,6 +621,7 @@
       - Item of 1 KB
     - Formula = (write/WCU=[1])/sec * (Size/1KB)
     - It needs to round size (up) to a multiple of 1KB
+    - WCU*(Size)*(factor)
   - RCU: Read
     - 1 RCU is equivalent to
       - 1 read/sec (strongly consistent)
@@ -626,6 +629,7 @@
       - Item size 4KB
     - Formula = (read/RCU=[1,2])/sec * (Size/4KB)
     - It needs to round size (up) to a multiple of 4KB
+    - RCU*(Size)*(factor)
 - Data is divided in partitions
   - Number of partitions
     - By Capacity: (TOTAL RCU / 3000) + (Total WCU / 1000)
@@ -816,14 +820,21 @@
     - Provides AWS credentials to user to access AWS resources directly
     - Integrated with Cognito User Pools
     - Can use unauthenticated identities
+    - Multiple rules are evaluated sequencial after first match, except when __CustomRoleArn__
   - Cognito Sync
     - Synchronize data from device to Cognito
     - Deprecated and replaced by AppSync
     - Requires Federates Identity Pool (not User Pool)
     - Store data in datasets (Up to 1MB)
     - Up to 20 dataset to synchronize
-    - Gives control and insight into data stored in Cognito
-- Use Cognito Streams to analyze data stored in Amazon Cognito
+    - Cognito Streams
+      - Kinesis stream to receive events
+      - Control and insight data stored in Amazon Cognito
+      - Use an existing or new Kinesis Stream and create a role to publush to Stream
+    - Cognito Events
+      - Allows execute Lambda functions in response to important events
+      - Function UpdateRecords must respond in 5 sec, if not LambdaSocketTimeoutException
+      - Try retry sync if you get a LambdaThrottledException 
 - [FAQ](https://aws.amazon.com/cognito/faqs/)
 
 ## SAM (Serverless Application Model)
