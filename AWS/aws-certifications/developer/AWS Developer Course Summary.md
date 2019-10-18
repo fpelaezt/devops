@@ -249,10 +249,15 @@
   - Half at a time
   - All at once
   - Custom: min healthy host = 75%
+- Deployment Confir for Lambda
+  - Canary
+  - Linear
+  - All at once
 - Failures
   - Instances stay in "failed state"
   - New deployments will first be deployed to "failed state" instances
   - Rollback: re-deploy old deployment or enable automated rollback
+  - If rollback fails when files not found, add manually or create a new app revision
 - Deployment targets
   - Set of tagged EC2 instances
   - Directly to an ASG even for new instances
@@ -280,6 +285,7 @@
 - Helpers
   - References
   - Functions
+    - Use cfn-init to install software (AWS::CloudFormation::Init)
 - Resources
   - AWS componentes
   - [224 types of resources](https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html)
@@ -537,6 +543,7 @@
 - Free Tier: 1 million and 400.000 GB seconds of compute time
 - Easy monitoring with CloudWatch Logs (integrated with debug statements)
 - Easy to get more resources per function
+- Integrated with CloudWatch and CloudTrail
 - Support: Node.js, Python, Java, C#, Goland, .NET
 - Configuration
   - Timeout
@@ -587,6 +594,7 @@
     - For Java or .NET select only the required libraries
   - Don't use recursive code
   - Don't put in a VPC unless needed
+  - Easy integration with SQS
 - [FAQ](https://aws.amazon.com/lambda/faqs/)
 
 ## DynamoDB
@@ -668,6 +676,7 @@
     - __FilterExpression__ can be used on client side
     - Return Up to 1MB
     - Number of items specified in __Limit__
+    - Key Condition Expression = Partition Key + Value in equality condition
   - Scan (inefficient)
     - Read entire table
     - Return Up to 1MB
@@ -692,6 +701,7 @@
     - Must define RCU/WCU for index
     - Possibility to add/modify GSI (not LSI)
     - Allow query entire table, across all partitions
+    - Not support Consistent Read
 - Concurrency
   - Optimistic locking / concurrency database
 - DAX
@@ -700,6 +710,12 @@
   - 5 minutes TTL for cache
   - Up to 10 nodes in the cluster
   - Multi AZ
+  - For eventual consistent read, it tries to get item from cache
+  - For strong consistent read, it passes the request to DynamoDB and avoid caching
+  - Item Cache
+    - stored GetItem and BatchGetItem operations
+  - Query Cache
+    - stored for Query and Scan operations
 - DB Streams
   - Changelog ends up in a stream
   - Stream can be read by AWS Lambda to:
@@ -782,6 +798,7 @@
 - CORS
   - Cross Origin Resource Sharing
   - Enable calls from other domains
+  - Manually return Access-Control-Allow-Origin to enable CORS on some method
   - OPTIONS pre-flight request must contain these headers
     - __Access-Control-Allow-Methods__
     - __Access-Control-Allow-Headers__
@@ -871,6 +888,10 @@
   - CSE
 - KMS
   - Fully integrated with IAM
+  - Encryption process
+    - GenerateDataKey to get the Plaintext key
+    - Encrypt using the Plaintext key
+    - Delete Plaintext key from memory
   - KMS can only encrypt 4KB of data per call
   - If data > 4KB use envelope encryption
   - Envelop
@@ -957,6 +978,7 @@
 - IAM and roles at the ECS task level
 - Security Groups and ACL's controls traffic
 - Use Cases: microservices, batch processing, migrate apps
+- If ECS is stopped, container instance is Active but Agent connection is false
 - Concepts
   - ECS Cluster
   - ECS Service
