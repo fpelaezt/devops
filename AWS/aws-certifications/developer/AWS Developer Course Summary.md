@@ -72,6 +72,9 @@
   - Cross Origin Resource Sharing
 - MFA
   - "aws-MultiFactorAuthPresent":"false" with a Deny Policy
+- Delete Policy
+  - Default is Delete
+  - Ensure Bucket is empty
 - Limits
   - Bucket: unlimited
   - File: 5TB
@@ -107,6 +110,7 @@
 - EB cli:
   - eb [create | status | health | events | logs | open | deploy | config | terminate]
 - Relies on CloudFormation
+- Modify EC Type using Launch Configuraton or Environment manifest in root
 - Optimization: Package dependencies into source code to avoid EC2 to resolve them
 - 1 environment runs 1 app version
 - Use version lifecycle to avoid reaching the version limit
@@ -293,7 +297,7 @@
   - Don't support dynamic amount of resources
 - Parameters
   - Use for things that can change in the future
-  - Types: String | Number | CommaDelimitedList | List | AWS Parameter
+  - Types: String | Number | CommaDelimitedList | List(Number) | AWS Parameter
   - Constraints: Min | Max | Defaults | AllowedValues
   - Reference: Fn::Ref or !Ref
   - Pseudo parameters: AccountId, StackName, StackId, Region, NoValue, NotificationARNs
@@ -425,7 +429,7 @@
   - Up to 256KB per message
 - Delay Queue
   - Default delay 0*, Up to 15 minutes
-  - Use __DelaySeconds__ to overwrite queue configuration
+  - Use __DelaySeconds__ Message Timer to overwrite queue configuration
 - Message
   - Body
     - String up to 256KB
@@ -890,6 +894,9 @@
   - Fully integrated with IAM
   - Encryption process
     - GenerateDataKey to get the Plaintext key
+      - Result: KeyId, CiphertextBlob, Plaintext
+    - GenerateDataKeyWithoutPlaintext to get key
+      - Result: KeyId, CiphertextBlob
     - Encrypt using the Plaintext key
     - Delete Plaintext key from memory
   - KMS can only encrypt 4KB of data per call
