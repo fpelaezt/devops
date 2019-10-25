@@ -80,6 +80,7 @@
   - File: 5TB
   - Use a random prefix to increse transactions per seconds
     - examplebucket/232a-2019-10-16/photo1.jgp
+- Use AWS S3 Inventory to look for files with millions of versions generating HTTPS 503 error
 - [FAQ](https://aws.amazon.com/s3/faqs/)
 
 ## SDK
@@ -112,9 +113,10 @@
 - Relies on CloudFormation
 - Modify EC Type using Launch Configuraton or Environment manifest in root
 - Optimization: Package dependencies into source code to avoid EC2 to resolve them
-- 1 environment runs 1 app version
+- 1 environment runs 1 app version (Upload app version to environment)
 - Use version lifecycle to avoid reaching the version limit
 - Use Packer to create your own customized machine images
+- Use "Create Snapshot" to retain database after termination
 - [FAQ](https://aws.amazon.com/elasticbeanstalk/faqs/)
 
 ## CICD
@@ -132,8 +134,9 @@
 - GIT
 - Integrated with Jenkins / CodeBuild
 - Authentication
+  - HTTPS Git credentials (AWS CLI Authentication helper)
+  - Access Key
   - SSH Keys
-  - HTTPS: AWS CLI Authentication helper or HTTPS credentials
   - MFA
 - Encryption
   - Repositories are encrypted at rest using KMS
@@ -182,6 +185,7 @@
 - Uses CloudWatch Alarms to detect failed builds and trigger notifications
 - Can use CloudWatch Events / AWS Lambda
 - Can trigger SNS Notifications
+- Code must be in the same region, othewise you get "The bucket specific endpoint not exist"
 - Support: Java, Ruby, Python, Go, Node.js, Android, .NET Core, PHP, Docker (extend environment)
 - Flow:
   - Source Code (buildspec.yml) + Build Docker Image (AWS or Custom)
@@ -275,6 +279,10 @@
   - VPN stacks
   - Network stacks
   - App stacks
+- Concepts
+  - StackSets: to work with multiple AWS accounts
+  - ChangeSets: Update stack
+  - Nested Stacks: separation of concern
 - To update Re-upload the new version
 - Deploy
   - Manual: Edit using CloudFormation Designer or by console
@@ -409,6 +417,9 @@
   - Uses an IAM Role with policy AWSX-RayWriteOnlyAccess
 - Enable on Elastic Beanstalk
   - Create an xray-deamon.config in the .ebextensions folder
+- Sample
+  - 1 req/sec & 5% of additional req per host
+  - Reservoir Rate + Fixe Rate%[(Total Request - Reservoir Rate)]
 - [FAQ](https://aws.amazon.com/xray/faqs/)
 
 ### AWS CloudTrail
@@ -487,7 +498,7 @@
 
 ### SNS
 
-- Producer send one message to the topic
+- Producer send one message to the topic with attributes (metadata)
 - Up to 10 million subscribers per topic
 - 100k topics
 - Fan Out
@@ -502,7 +513,7 @@
 - Automatically replicated to 3 AZ
 - Kinesis Streams
   - Low latency ingest
-- Kinesis Analytics
+- Kinesis Data Analytics
   - Real-time analytics using SQL
 - Kinesis Firehose
   - Load streams into S3, Readshift, ElasticSearch, Splunk
@@ -516,7 +527,7 @@
 - Once data is inserted, it can't be deleted
 - Shards
   - 1MB/s or 1k messages/s at write per shard
-  - 2MB/s at read per shard
+  - 2MB/s at read per shard, message propagation delay 70 ms for all consumers
   - Billed per shard
   - Batching available
   - Records are ordered only per shard
@@ -526,7 +537,7 @@
   - Same key goes to same partition
   - Random key to prevent hot partition
   - __PutRecords__ for Bash
-  - If gets error __ProvisionedThroughputExceeded__ when limits exceded
+  - If gets error __ProvisionedThroughputExceeded__ when limits exceded limit the requests
 - Consumers
   - Normal consumer: CLI, SDK, etc
   - Kinesis Client Library (Java, Node, Python, Ruby, .NET)
@@ -582,6 +593,9 @@
   - Enable weight traffic to new versions (Create and Update -routing-config paramater)
 - Lambda@Edge use to customize CloudFront content
 - If requires access to VPC resources, the SubnetID and Security Group ID must be mentioned
+- Routing (5%)
+  - aws lambda update-alias --name alias name --function-name function-name \
+    --routing-config AdditionalVersionWeights={"2"=0.05}
 - Parts
   - FunctionName
   - Layers
@@ -688,6 +702,10 @@
     - Number of items specified in __Limit__
     - Parallel scan to faster performance
     - Can use __ProjectionExpression__ + __FilterExpression__
+- Return RCU for Scan/Query
+  - NONE: Default
+  - TOTAL: RCU consumed
+  - INDEXES: RCU consumed for each table and index accessed
 - Indexes
   - Local Secondary Index (LSI)
     - Alternative range key
@@ -786,7 +804,7 @@
 - Swagger (Open API spec)
   - Define REST APIs as code
   - Import/Export
-- Caching
+- API Caching
   - TTL from 0-300 sec. Default 300s
   - Can be encrypted
   - Storage from 0.5-237 GB
@@ -819,6 +837,7 @@
 - Security
   - IAM Permissions
     - Sig v4: Authorize User/Rol to access API Gateway
+    - API Keys
   - Lambda Authorizer (Custom Authorizer)
     - Use Lambda to validate token in header
     - Option to cache result of authentication
@@ -827,6 +846,9 @@
   - Cognito User Pools
     - Manage user lifecycle
     - Only help with authentication (not authorization)
+- Errors
+  - 40X: Request
+  - 50X: Server & Network
 - [FAQ](https://aws.amazon.com/api-gateway/faqs/)
 
 ## AWS Cognito
@@ -922,6 +944,7 @@
 
 - AWS Parameter Store (SSM)
   - Also called Simple Systems Manager
+  - Alternative to AWS Secrets Manager with cost
   - Secure storage for configuration and secrets
   - Free
   - Version tracking
@@ -933,7 +956,7 @@
 
 - STS
   - Security Token Service
-  - AssumeRole API
+  - API's: AssumeRole, AssumeRoleWithWebIdentity, AssumeRoleWithSAML
   - Temporary credentials [15m - 1h]
   - Uses Tokens not Access Keys
   - Use mainly for Users. For application use Access-Keys
@@ -972,6 +995,11 @@
 - Code run on EC2 (not serverless)
 - Older than Step Functions ()
 - Used over Step Functions only if external signals or child processes are needed
+- States can have multiple transitions
+- Best Practices
+  - Use S3 when the payloads are over 32KB
+  - Inlude a timeout in each state machine definition
+  - Avoid reaching history limit
 - [FAQ](https://aws.amazon.com/swf/faqs/)
 
 ### AWS ECS (Elastic Container Service)
