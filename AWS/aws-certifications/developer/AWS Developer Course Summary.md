@@ -42,6 +42,7 @@
 - [Amazon Instances review](https://ec2instances.info/)
 - Instance Meta-Data: http://169.254.169.254/latest/meta-data/
 - [Monthly Calculator](https://calculator.s3.amazonaws.com/index.html)
+- AWS Inspector: Check EC2 vulnerabilities
 - [FAQ](https://aws.amazon.com/ec2/faqs/)
 
 ## RDS
@@ -51,6 +52,8 @@
   - MySQL: Within the DB: GRANT USAGE ON *.* TO 'mysqluser'@'%' REQUIRE SSL;
 - Microsoft SQL Server: supports Transparent Data Encryption (TDE)
 - Used when complex joins are needed
+- Use Endpoint got from DescribeBDInstances API to connect
+- Use General, Error and Slow query logs to debugs issues
 - [FAQ](https://aws.amazon.com/rds/faqs/)
 
 ## S3
@@ -81,6 +84,7 @@
   - Use a random prefix to increse transactions per seconds
     - examplebucket/232a-2019-10-16/photo1.jgp
 - Use AWS S3 Inventory to look for files with millions of versions generating HTTPS 503 error
+- Provides 3500 PUT / 5500 GET per sec per prefix
 - [FAQ](https://aws.amazon.com/s3/faqs/)
 
 ## SDK
@@ -100,6 +104,7 @@
   - Rolling with additional batches: spins up new instances, run both versions, additional cost, full capacity all time
   - Immutable: spins up new instances in a new ASG, only one version, double capacity for a short time
   - Blue/Green: Need manual intervention, similar to Immutable, Route S3 to weighted traffic
+    - Create new environment with new app version and swap URL
 - Code:
   - Must be in Zip or WAR
   - Up to 512MB
@@ -161,6 +166,7 @@
 - Each stage contains a set of actions
 - Changes are recorded into AWS CloudWatch Events (can trigger SNS)
 - IAM Service Role must have appropriate permissions
+- Define input/output in Data Nodes
 - Multiaccount access
   - Create a Customer Master Key in KMS
   - Set policy and role to enable Cross-Account access
@@ -174,7 +180,7 @@
 - Security
   - Uses KMS to encrypt artifacts
   - Uses IAM to build
-  - Uses VPC to network
+  - Uses VPC to network (with vpc-specific config in project)
   - Uses CloudTrail for API logging
 - Components
   - Project: Define how AWS runs a build
@@ -687,7 +693,7 @@
     - Operations are done in parallel
     - Up to user to retry failed updates
   - BathGetItem
-    - Up to 100 item
+    - Up to 100 items
     - Up to 16 MB
   - Query
     - Return item based on Partition + SortKey
@@ -875,11 +881,11 @@
     - Cognito Streams
       - Kinesis stream to receive events
       - Control and insight data stored in Amazon Cognito
-      - Use an existing or new Kinesis Stream and create a role to publush to Stream
+      - Use an existing or new Kinesis Stream and create a role to publish to Stream
     - Cognito Events
       - Allows execute Lambda functions in response to important events
       - Function UpdateRecords must respond in 5 sec, if not LambdaSocketTimeoutException
-      - Try retry sync if you get a LambdaThrottledException 
+      - Try retry sync if you get a LambdaThrottledException
 - [FAQ](https://aws.amazon.com/cognito/faqs/)
 
 ## SAM (Serverless Application Model)
@@ -888,6 +894,7 @@
 - Config are YAML files
 - Support CloudFormation components
 - Lambda Code must be in root directory along with YAML file
+- Upload Code to an S3 bucket
 - Deployment Patterns
   - Canary10Percent5Minutes (Initial 10%, the rest after 5 min)
   - Linear10PercentEvery1Minute
@@ -985,6 +992,7 @@
 - Build serverless visual workflows to orchestrate Lambda functions / microservices
 - Represent flow as JSON state machine
 - Features: sequence, parallel, conditions, timeouts, error handling
+- Use Lambda Retry code with ErrorEquals for handling ServiceException
 - Can also integrate with EC2, API Gateway
 - Maximum execution time: 1 year
 - [FAQ](https://aws.amazon.com/step-functions/faqs/)
@@ -1059,6 +1067,7 @@
 - Redshift: OLAP
   - Analytic
   - Data Warehousing / Data Lake
+  - Use COPY to transfer large data from S3/DynamoDB
 - Neptune: Graph DB
 - DMS: Database Migration Service
 
