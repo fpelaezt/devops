@@ -33,6 +33,8 @@
     - [AWS ECS (Elastic Container Service)](#aws-ecs-elastic-container-service)
     - [AWS Databases](#aws-databases)
     - [AWS CodeStart](#aws-codestart)
+    - [AWS QuickSight](#aws-quicksight)
+    - [AWS Config](#aws-config)
 
 ## EC2
 
@@ -405,6 +407,10 @@
 - Identify affected users
 - Compatible
   - Lambda, Beanstalk, ECS, ECL, API Gateway, EC2, OnPremise
+  - Lambda
+    - _X_AMZN_TRACE_ID
+    - _AWS_XRAY_CONTEXT_MISSING_
+    - _AWS_XRAY_DAEMON_ADDRESS_
 - Leverages on Tracing
   - Annotation can be added to traces to provide extra-info
 - Scope
@@ -507,6 +513,7 @@
 - Producer send one message to the topic with attributes (metadata)
 - Up to 10 million subscribers per topic
 - 100k topics
+- Add Filter Policy to avoid some messages
 - Fan Out
   - Push to one SNS, receive in many SQS
 - [FAQ](https://aws.amazon.com/sns/faqs/)
@@ -538,6 +545,7 @@
   - Batching available
   - Records are ordered only per shard
   - Number of shards can change (reshard / merge)
+  - number_of_shards = max(incoming_write_bandwidth_in_KiB/1024, outgoing_read_bandwidth_in_KiB/2048)
 - Put Records
   - __PutRecord__ API + Partition Key
   - Same key goes to same partition
@@ -559,6 +567,7 @@
 - Virtual functions
 - Limited by time
 - Run on-demand
+- Run on-schedule using Cloudwatch events
 - Scaling is automated
 - Pay per request and compute time. See [Pricing](https://aws.amazon.com/lambda/pricing/?nc1=h_ls)
 - Free Tier: 1 million and 400.000 GB seconds of compute time
@@ -609,7 +618,7 @@
 - Best practices
   - Heavy-duty outside function handler
     - Connection to DB
-    - Initialize AWS SDK
+    - Initialize AWS SDK (reuse Execution Context)
     - Pull it dependencies
   - Environment variables
     - Connections strings, S3 buckets
@@ -643,7 +652,7 @@
     - Set: String, Number, Binary
 - Primary Key
   - Option 1: Partition Key (Use to distribute data). Similar to SQL tables
-  - Option 2: Partition Key + Sort Key (Combination must be unique)
+  - Option 2: Partition Key [HASH] + Sort Key (Combination must be unique) [RANGE]
 - Provisioned Throughput (Capacity Units)
   - Can be exceeded using "burst credit"
   - If "burst credit" is empty, you'll get error __ProvisionedThroughputException__
@@ -783,6 +792,9 @@
 - Cache API responses
 - Changes must be deployed to "Stages"
 - Use Binary Payloads for non-text request/response
+- Proxys
+  - "type":"aws_proxy" redirect to Lambda
+  - "type":"http_proxy" redirect to backend HTTP endpoints
 - To Modify behavior of:
   - Front-End edit the Method request/response, eg: XML<=>JSON
   - Back-End edit Integration request/response, eg: Databases
@@ -867,6 +879,7 @@
     - Can enable Federated Identities (Facebook/Google/SAML)
     - Sends back a JSON Web Token (JWT)
     - Optional MFA available
+    - Advanced Security = Block Use when credentials are compromised
   - Cognito Identity Pools (Federated Identity)
     - Provides AWS credentials to user to access AWS resources directly
     - Integrated with Cognito User Pools
@@ -972,6 +985,7 @@
 - Policies
   - [Policy Generator](https://awspolicygen.s3.amazonaws.com/policygen.html)
   - [Simulator](https://policysim.aws.amazon.com/home/index.jsp?#)
+  - Supports Policy versioning
   - CLI Simulator
     - Get context keys
     - Use aws iam simulate-custom-policy
@@ -1018,6 +1032,7 @@
   - Fargate: Running ECS tasks (serverless)
   - EKS: Running ECS on Kubernetes (EC2)
   - ECR: Docker Container Registry
+- Supports Docker Hub
 - IAM and roles at the ECS task level
 - Security Groups and ACL's controls traffic
 - Use Cases: microservices, batch processing, migrate apps
@@ -1068,6 +1083,7 @@
   - Analytic
   - Data Warehousing / Data Lake
   - Use COPY to transfer large data from S3/DynamoDB
+  - Support enabling encryption after the cluster is created
 - Neptune: Graph DB
 - DMS: Database Migration Service
 
@@ -1076,3 +1092,11 @@
 - Manage full cycle of project
 - Develop, Build, Deploy
 - [FAQ](https://aws.amazon.com/codestar/faqs/)
+
+### AWS QuickSight
+
+- BI analytics to build visualizations, perform analysis and get insights
+
+### AWS Config
+
+- Analize, audit and evaluate AWS configurations
