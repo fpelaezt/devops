@@ -55,7 +55,7 @@
 - Microsoft SQL Server: supports Transparent Data Encryption (TDE)
 - Used when complex joins are needed
 - Use Endpoint got from DescribeBDInstances API to connect
-- Use General, Error and Slow query logs to debugs issues
+- Use General, Error and Slow query logs to debug issues
 - [FAQ](https://aws.amazon.com/rds/faqs/)
 
 ## S3
@@ -105,7 +105,7 @@
   - Rolling: few instances at a time (called bucket), less capacity, run both versions, no additional cost
   - Rolling with additional batches: spins up new instances, run both versions, additional cost, full capacity all time
   - Immutable: spins up new instances in a new ASG, only one version, double capacity for a short time
-  - Blue/Green: Need manual intervention, similar to Immutable, Route S3 to weighted traffic
+  - Blue/Green: Manual intervention needed, similar to Immutable, Route S3 to weighted traffic
     - Create new environment with new app version and swap URL
 - Code:
   - Must be in Zip or WAR
@@ -265,7 +265,7 @@
   - Half at a time
   - All at once
   - Custom: min healthy host = 75%
-- Deployment Confir for Lambda
+- Deployment Config  for Lambda
   - Canary
   - Linear
   - All at once
@@ -273,7 +273,7 @@
   - Instances stay in "failed state"
   - New deployments will first be deployed to "failed state" instances
   - Rollback: re-deploy old deployment or enable automated rollback
-  - If rollback fails when files not found, add manually or create a new app revision
+  - If rollback fails when files not found, add them manually or create a new app revision
 - Deployment targets
   - Set of tagged EC2 instances
   - Directly to an ASG even for new instances
@@ -407,10 +407,10 @@
 - Identify affected users
 - Compatible
   - Lambda, Beanstalk, ECS, ECL, API Gateway, EC2, OnPremise
-  - Lambda
-    - _X_AMZN_TRACE_ID
-    - _AWS_XRAY_CONTEXT_MISSING_
-    - _AWS_XRAY_DAEMON_ADDRESS_
+- Parameter
+  - _X_AMZN_TRACE_ID
+  - _AWS_XRAY_CONTEXT_MISSING_
+  - _AWS_XRAY_DAEMON_ADDRESS_
 - Leverages on Tracing
   - Annotation can be added to traces to provide extra-info
 - Scope
@@ -462,7 +462,7 @@
     - MD5 hash
 - Consumers
   - Receive up to 10 message at a time
-  - Process the message withing the visibility timeout
+  - Process the message within the visibility timeout
   - Delete the message using ID & receipt handle (DeleteMessage)
 - Visibility Timeout
   - Default 30sec*, Min 0sec, Up to 12 hours
@@ -478,7 +478,7 @@
   - Not available in all regions
   - Lower throughput 3k/sec with batching, 300/s without
   - No per message delay (only per queue)
-  - De-deplication interval 5 min
+  - De-duplication interval 5 min
   - Message GroupID allows to group. Extra tag
   - Only one worker per group
   - Must be defined at queue creation
@@ -510,7 +510,7 @@
 
 ### SNS
 
-- Producer send one message to the topic with attributes (metadata)
+- Producer sends one message to the topic with attributes (metadata)
 - Up to 10 million subscribers per topic
 - 100k topics
 - Add Filter Policy to avoid some messages
@@ -551,7 +551,7 @@
   - Same key goes to same partition
   - Random key to prevent hot partition
   - __PutRecords__ for Bash
-  - If gets error __ProvisionedThroughputExceeded__ when limits exceded limit the requests
+  - If got error __ProvisionedThroughputExceeded__ when limits exceded, limit the requests
 - Consumers
   - Normal consumer: CLI, SDK, etc
   - Kinesis Client Library (Java, Node, Python, Ruby, .NET)
@@ -805,11 +805,11 @@
     - Are passed to the __context__ of Lambda
     - Use Case: point to different Lambda Alias
     - Passed as
-    - A full URI without protocol = http: //$stageVariables.< variable_name >
-    - A full domain = http ://$stageVariables.< variable_name >/resource/operation
-    - A subdomain = http ://$stageVariables.< variable_name >.example.com/resource/operation
-    - A path = http ://example.com/$stageVariables.< variable_name >/bar
-    - A query string = http ://example.com/foo?q=$stageVariables.< variable_name >
+      - A full URI without protocol = http: //$stageVariables.< variable_name >
+      - A full domain = http ://$stageVariables.< variable_name >/resource/operation
+      - A subdomain = http ://$stageVariables.< variable_name >.example.com/resource/operation
+      - A path = http ://example.com/$stageVariables.< variable_name >/bar
+      - A query string = http ://example.com/foo?q=$stageVariables.< variable_name >
 - URL
   - https://xxx.yyy/resource/stage (eg:. /chapters/dev)
 - Canary Deployment
@@ -1015,12 +1015,12 @@
 
 - Coordinate work amongst applications
 - Code run on EC2 (not serverless)
-- Older than Step Functions ()
+- Older than Step Functions
 - Used over Step Functions only if external signals or child processes are needed
 - States can have multiple transitions
 - Best Practices
   - Use S3 when the payloads are over 32KB
-  - Inlude a timeout in each state machine definition
+  - Include a timeout in each state machine definition
   - Avoid reaching history limit
 - [FAQ](https://aws.amazon.com/swf/faqs/)
 
