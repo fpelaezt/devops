@@ -557,6 +557,7 @@
   - Kinesis Client Library (Java, Node, Python, Ruby, .NET)
     - Uses DynamoDB to checkpoint offsets
     - Uses DynamoDB to track other workers and share work among shards
+    - Use Data Strean Consumers to integrate with lambda
 - Security
   - Encrytion at rest is available using KMS
   - VPC endpoints available
@@ -583,6 +584,7 @@
   - Must have a role
 - Concurrency
   - Can be set a limit using "Reserve concurrency"
+  - Default 1000 per account
   - Each extra invocation trigger a __Throttle__
     - syncrhonous invocation: return __ThrottleError__ - 429
     - asyncrhonous invocation: retry automatically twice and then go to DLQ
@@ -606,6 +608,7 @@
   - Pointers to Lambda versions
   - Mutable
   - Enable weight traffic to new versions (Create and Update -routing-config paramater)
+  - GetAlias API
 - Lambda@Edge use to customize CloudFront content
 - If requires access to VPC resources, the SubnetID and Security Group ID must be mentioned
 - Routing (5%)
@@ -615,6 +618,8 @@
   - FunctionName
   - Layers
   - Handler
+- Support Kinesis Stream integration
+  - Use IteratorAge metric to get the time between last message and last processed
 - Best practices
   - Heavy-duty outside function handler
     - Connection to DB
@@ -639,7 +644,7 @@
 - Support millions of requests/sec and TB storage
 - Low latency
 - Enable event driver programming with DynamoDB Streams
-- Support TTL for Item to reduce storage usage
+- Support TTL for Item to reduce storage usage (Enable over any field name)
 - Ideal to store JSON information
 - Tables
   - Primary Key (decided at time creation)
@@ -777,6 +782,7 @@
 - Amazon DMS to migrate to DynamoDB
 - A local DynamoDB can be launch in the computer for testing
 - Decrease pagesize to reduce throttling
+- Enable DynamoDBCrudPolicy for Create/Read/Update/Delete permissions
 - [FAQ](https://aws.amazon.com/dynamodb/faqs/)
 
 ## API Gateway
@@ -908,7 +914,8 @@
 - Support CloudFormation components
 - Lambda Code must be in root directory along with YAML file
 - Upload Code to an S3 bucket
-- Deployment Patterns
+- Use __AutoPublishAlias__ to create/publish/points newer versions
+- Deployment Preferences Types
   - Canary10Percent5Minutes (Initial 10%, the rest after 5 min)
   - Linear10PercentEvery1Minute
   - AllAtOnce
