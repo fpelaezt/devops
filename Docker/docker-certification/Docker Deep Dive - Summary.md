@@ -1,0 +1,369 @@
+# Ebook Docker Deep Dive - Summary
+
+- [Ebook Docker Deep Dive - Summary](#ebook-docker-deep-dive---summary)
+  - [Storage](#storage)
+  - [Engine](#engine)
+  - [Logs](#logs)
+  - [Images](#images)
+  - [Containers](#containers)
+  - [Compose](#compose)
+  - [Swarm](#swarm)
+  - [Networking](#networking)
+  - [Volumes](#volumes)
+  - [Stacks](#stacks)
+  - [Commands](#commands)
+
+## Storage
+
+- Use Storage Drivers
+- Per Node selection
+- Config in /etc/docker/daemon.json
+- Location /var/lib/docker/storage-driver/
+- __storage-driver__ types
+  - aufs
+    - Use for older versions of Ubuntu
+  - overlay2
+    - Use for recents version of Ubuntu/RedHat
+  - devicemapper
+    - loopback mounted sparse files: Default (No suitable for PROD)
+    - direct-lvm: Config using __storage_opts__
+    - Use for olders version of RedHat
+  - btrfs
+    - Use for SUSE
+  - zfs
+  - windowsfilter
+
+## Engine
+
+- Docker Engine
+  - Components
+    - Docker Client
+      - CLI
+      - Talks to daemon using IPC/Unix socket at /var/run/docker.sock
+      - Optional use network TCP Ports 2375 & 2376
+    - Docker Deamon
+      - REST API
+      - Image management
+      - Image build
+      - Authentication
+      - Security
+      - Core networking
+      - Orchestation
+    - containerd
+      - Container supervisor, manage lifecycle (start | stop | pause)
+      - Image management (push | pull)
+    - shim
+      - Enable daemonless containers
+      - Container parent process
+      - Keep STDIN/STDOUT streams open
+      - Report container exit status to the daemon
+    - runc
+      - Container runtime (interface to kernel)
+      - Create containers
+  - Docker Engine on Linux
+    - dockerd
+    - docker-containerd
+    - docker-containerd-shim
+    - docker-runc
+
+## Logs
+
+- Config in daemon.json
+- Verbosity
+  - debug=true
+  - log-level
+    - debug
+    - info
+    - warn
+    - error
+    - fatal
+- Drivers (log-driver)
+  - Types
+    - json-file (default)
+    - journald (linux only with systemd)
+    - syslog
+    - splunk
+    - gelf
+  - Requires
+    - Process in container running with PID 1
+    - Using STDOUT/STDERR
+
+## Images
+
+- Registries
+  - Repositories of images
+  - Types: Official and Unofficial
+- Naming
+  - __repository__:__tag__
+  - latest is not always the most updated
+- Filters
+  - dangling: untagged image
+  - before: requires image id and return images created before
+  - since:  requires image id and return images created after
+  - label
+- Layers
+  - snapshooter: responsible for stacking layter and presenting as a unified FS
+  - Has its own distributed hash
+- Multi-architecture
+  - Registry API supports manifest list and manifest
+    - manifest list: architecture
+    - manifest: layers
+
+## Containers
+
+- Restart Policies
+  - always: start again when daemon is restarted
+  - unless-stopped: do not start when daemon is restarted
+  - on-failure: restart if exist with a non-zero exit code. Start again with daemon
+- Containerizing
+- build context is the directory containing the app
+- Dockerfile
+  - FROM: Base image. Layer
+  - LABEL: Metadata (eg. maintainer)
+  - RUN: Execute commands. Layer
+  - COPY: Copy app files. Layer
+  - WORKDIR: Set working directory. Metadata
+  - EXPOSE: Expose networking ports. Metadata
+  - ENTRYPOINT: Set main app. Metadata
+  - #: Use for comments
+- Required info to upload to Docker Hub
+  - Registry
+  - Repository
+  - Tag
+- Multi-Stage
+  - Best practice for making smaller and secure images
+  - Use multiple FROM statements
+    - FROM image AS layer_name
+-Best practices
+  - Cache
+    - Use cache to speed up process time
+    - If a layer don't exist in cache, all the rest instructions won't use it
+    - Use flag --no-cache=true to ignore cache
+  - Squash
+    - Use when a 1-layer image is needed to reuse later
+    - Use flag --squash
+    - Push/Pull requires the entire image to be transferred
+  - Linux APK
+    - Use the no-install-recommends to avoid unwanted packages
+
+## Compose
+
+- Top Level keys
+  - version: mandatory
+  - services: apps
+  - networks
+    - default bridge
+    - use driver to specify different network types
+    - if apps share same network, they can resolv each other by name
+  - volumes
+  - secrets
+  - configs
+
+## Swarm
+
+- Node Types
+  - managers
+    - One is the Leader
+    - The rest proxies the commands to the Leader
+    - Deploy odd number of managers, only 3 or 5 is enough
+    - Interconect them using high speed reliable networks
+  - workers
+- TCP Ports
+  - 2377 tcp: client to daemon communication
+  - 7646 tcp/upd: control plane gossip
+  - 4789 udp: VXLAN-based overlay networks
+- Replication mode
+  - replicated: distributed evently accross the cluster
+  - global: single instance in every node
+- Networks
+  - ingress mode
+    - Redirect traffic to any host to replicas
+    - Uses a layer 4 routing called Service Mesh
+  - host mode: Publish service only in the node running replicas
+
+## Networking
+
+- Components
+  - Container Network Model (CNM)
+    - Sandboxes: Isolated stacks. Ethernet interfaces, port, routes, dns
+    - Endpoints: Virtual interfaces. Connect Sandbox to Network
+    - Networks: Software 802.1d bridge (switch)
+  - libnetwork: CNM docker implemenentation. Written on Go
+    - service discovery
+    - network control plane
+    - management plane
+    - ingress-based container load balacing
+  - Drivers: extend capabilities such as VXLAN
+    - Responsible for data plane
+    - Types
+      - Linux built-in
+        - bridge
+        - overlay
+        - MACVLAN
+      - Windows built-in
+        - nat (bridge)
+        - overlay
+        - transparent (vlans)
+        - l2bridge
+      - Third Party (remote drivers)
+        - calico
+        - contiv
+        - kuryr
+        - weave
+- Network Types
+  - Single-host bridge
+    - Default network for Docker Engine
+    - Allow only connection in the host
+    - Default bridge network don't support DNS
+    - User-created bridge networks support DNS
+    - Port Mapping: Doesn't scale, use for development or small applications
+  - Multi-host overlay
+    - Enable layer2 connection over multiple hosts
+    - Network is only available to workers nodes when there's a container attached to it
+    - Uses VXLAN primer tunnels
+    - A virtual switch (Br0) is created inside the sandbox
+    - Each end of the tunnel is terminated by VXLAN Tunnel Endpoint (VTEP). UDP 4789
+    - Each container gets its own virtual ethernet (veth)
+    - veth --> Bro --> VTEP
+    - Supports Layer 3 routing when using the --subnet option in the network creation
+      - This creates a new virtual switch (Br1)
+  - MACVLAN
+    - Allow connection to non-containers apps or existing networks VLANS
+    - Give MAC & Address to each containers
+    - Supports VLAN trunking
+    - Requires
+      - Promiscuous mode in the NIC which isn't allowed in cloud
+      - subnet, ip-range, gateway, parent interface
+- Service Discovery
+  - Allows containers and swarm services locate containers by name in the same network
+  - Uses an internal DNS service
+  - Custom dns with --dns and -dns-search flags
+- Ingress Load Balancing
+
+## Volumes
+
+- Allows persist data
+- Volumes are created with default local driver
+- Main drivers
+  - Block Storage
+    - Examples: HPE 3PAR, Amazon EBS, OpenStack Block Storage
+  - File Storage
+    - Examples: NetApp FAS, Azure File Storage, Amazon EFS
+  - Object Storage
+    - Examples: Amazon S3, Ceph, Minio
+
+## Stacks
+
+## Commands
+
+- docker version
+- docker system info
+- docker save
+- docker container run -it image_name /bin/bash
+  - Ctrl + PQ (exit without terminating container)
+- docker container ls
+- docker container exec -it container_id /bin/bash
+  - Attach terminal to container
+- docker container run image_name app
+- docker container run
+  - -d
+  - --name container_name
+  - --publish outside_port:inside_port
+  - --net-alias dns_name
+  - --mount source=container_dir,target=host_dir
+  - image_name
+- docker container stop container_id
+- docker container rm container_id
+- docker container rm -f container_id
+- docker container ls -a
+- docker container pause container_id
+- docker container unpause container_id
+- docker container inspect container_id
+  - --format='{{range.NetworkSettings.Network}}{{.IPAddress}}{{end}}'
+- docker container logs container_id
+- docker image pull image_name
+- docker image pull -a image_name
+  - Pull all tags
+- docker image pull image_name@digests
+- docker image ls
+- docker image ls --filter dangling=true
+- docker image ls --filter=reference="*:latest"
+- docker image ls --format "{{.Repository}}: {{.Tag}}: {{.Size}}
+- docker image ls --digests image:name
+- docker image build -t image_name .
+- docker image rm image_id
+- docker image rm $(docker image ls -q) -f
+- docker image prune
+  - option -a: unused images
+- docker image inspect image_name
+- docker image history image_name
+- docker search image_name
+- docker search image_name --filter "is-official=true"
+- docker search image_name --filter "is-automated=true" --limit=5
+- docker image build -t image:tag .
+  - -f to specify a Dockerfile location
+- docker login
+- docker image tag current_tag new_tag
+  - docker image tag image:tag repository/image:tag
+- docker image push image:tag
+   docker network ls
+- docker-compose up
+  - -f specify a different compose file
+  - -d daemon mode
+  - & foreground
+- docker-compose down
+- docker-compose ps
+- docker-compose top
+- docker-compose stop
+- docker-compose rm
+- docker-compose restart
+- docker swarm init
+  - --advertise-addr: nodes should be connect to this IP
+  - --listen-addr: ip use to listen for swarm traffic
+- docker node ls
+- docker swarm join-token worker
+- docker swarm join-token manager
+- docker swarm join --token token
+  - --advertise-addr: nodes should be connect to this IP
+  - --listen-addr: ip use to listen for swarm traffic
+- docker swarm update --autolock=true
+- docker swarm unlock
+- docker service create
+  - --name app_name
+  - --p outside_port:inside_port
+  - --publish=outside_port,target:inside_port,mode=host
+  - --replicas #replicas
+  - --network network_name
+  - --log-driver driver
+  - --log-opts opts
+  - image
+- docker service ls service_name
+- docker service ps service_name
+- docker service inspect service_name
+  - --pretty
+  - --mode global
+- docker service scale name=#replicas
+- docker service rm service_name
+- docker service update
+  - --image image_name
+  - --update-parallelism 2
+  - --update-delay 20s
+  - service_name
+- docker service logs service_name
+  - --tail #lines
+- docker network inspect network_name
+- docker network create
+  - -d type
+  - subnet
+  - ip-range
+  - gateway
+  - -o parent=host_interface
+  - network_name
+- docker network prune
+- docker network rm network_name
+- docker port container_id
+- docker volume create volume_name
+- docker volume ls
+- docker volume inspect volume_name
+- docker volume prune
+- docker volume rm

@@ -38,6 +38,7 @@
 
 ## EC2
 
+* ssh -i file.pem ec2-user@ec2_endpoint
 * aws ec2 run-instances --dry-run --image-id \
     ami-0af6d461cf36733d2 --instance-type t2.micro | Test if command succeds
 * aws ec2 describe-instances --output table > aws.log
