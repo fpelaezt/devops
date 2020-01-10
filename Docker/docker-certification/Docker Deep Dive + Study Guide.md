@@ -11,6 +11,8 @@
   - [Networking](#networking)
   - [Volumes](#volumes)
   - [Stacks](#stacks)
+  - [Security](#security)
+  - [Enterprise](#enterprise)
   - [Commands](#commands)
 
 ## Storage
@@ -40,7 +42,7 @@
     - Docker Client
       - CLI
       - Talks to daemon using IPC/Unix socket at /var/run/docker.sock
-      - Optional use network TCP Ports 2375 & 2376
+      - Optional use network TCP Ports 2375 (unencrypted) & 2376 (encrypted)
     - Docker Deamon
       - REST API
       - Image management
@@ -102,7 +104,7 @@
   - since:  requires image id and return images created after
   - label
 - Layers
-  - snapshooter: responsible for stacking layter and presenting as a unified FS
+  - snapshooter: responsible for stacking layers and presenting as a unified FS
   - Has its own distributed hash
 - Multi-architecture
   - Registry API supports manifest list and manifest
@@ -116,7 +118,7 @@
   - unless-stopped: do not start when daemon is restarted
   - on-failure: restart if exist with a non-zero exit code. Start again with daemon
 - Containerizing
-- build context is the directory containing the app
+- Build context is the directory containing the app
 - Dockerfile
   - FROM: Base image. Layer
   - LABEL: Metadata (eg. maintainer)
@@ -137,7 +139,7 @@
 -Best practices
   - Cache
     - Use cache to speed up process time
-    - If a layer don't exist in cache, all the rest instructions won't use it
+    - If a layer doesn't exist in cache, all the rest instructions won't use it
     - Use flag --no-cache=true to ignore cache
   - Squash
     - Use when a 1-layer image is needed to reuse later
@@ -145,6 +147,10 @@
     - Push/Pull requires the entire image to be transferred
   - Linux APK
     - Use the no-install-recommends to avoid unwanted packages
+- Facts
+  - Docker daemon have a priority to avoid kernel kill it when there's a memory issue
+  - Docker containers doesn't have that priority
+  - Limits can be set at Memory, CPUs or GPUs
 
 ## Compose
 
@@ -154,7 +160,7 @@
   - networks
     - default bridge
     - use driver to specify different network types
-    - if apps share same network, they can resolv each other by name
+    - if apps share same network, they can resolve each other by name
   - volumes
   - secrets
   - configs
@@ -165,7 +171,7 @@
   - managers
     - One is the Leader
     - The rest proxies the commands to the Leader
-    - Deploy odd number of managers, only 3 or 5 is enough
+    - Deploy odd number of managers, 3 or 5 is enough
     - Interconect them using high speed reliable networks
   - workers
 - TCP Ports
@@ -180,6 +186,9 @@
     - Redirect traffic to any host to replicas
     - Uses a layer 4 routing called Service Mesh
   - host mode: Publish service only in the node running replicas
+- Facts
+  - Pending service are services that can't be started (all nodes down, too much memory required, replicas=0)
+  - 
 
 ## Networking
 
@@ -188,13 +197,16 @@
     - Sandboxes: Isolated stacks. Ethernet interfaces, port, routes, dns
     - Endpoints: Virtual interfaces. Connect Sandbox to Network
     - Networks: Software 802.1d bridge (switch)
-  - libnetwork: CNM docker implemenentation. Written on Go
+  - libnetwork: CNM docker implemenentation written on Go
     - service discovery
     - network control plane
     - management plane
     - ingress-based container load balacing
   - Drivers: extend capabilities such as VXLAN
     - Responsible for data plane
+    - Use driver_opts (encrypted: 'yes') for data plane
+    - Control plane is encrypted by default
+    - Encryption bring 10% of overhead in traffic
     - Types
       - Linux built-in
         - bridge
@@ -254,6 +266,131 @@
 
 ## Stacks
 
+- Use docker-compose.yml files
+- Can define secrets
+  - For previoulsy created passwords use external: true
+  - For inline passwords use file: filename
+- Docker Stack doesn't support building images, Docker Compose does
+- Every service need a network to be attached, otherwise a default is created
+- Re-deploying the stack will only update changed components
+- Components
+  - version
+  - services
+    - service
+      - image
+      - ports
+        - "outside_port:inside_port"
+      - secrets
+        - source
+        - target
+      - networks
+      - environments
+      - stop_grace_period : 10s*
+      - volumes
+      - deploy
+        - placements
+          - constraints
+            - node.id | node.hostname | node.role | engine.labels.operatingsystem | node.labels.zone
+        - replicas
+        - update_config
+          - parallelism
+          - failure_action: rollback | pause* | continue
+        - restart_policy
+          - condition: on-failure | always
+          - delay
+          - max_attempts
+          - window
+  - networks
+    - network
+      - driver
+      - driver_opts
+        - encrypted
+  - secrets
+    - secret
+      - external | file
+
+## Security
+
+- Layers
+  - Docker
+    - Secrets Management
+    - Docker Content Trust (DCT)
+      - Allows sign images and verify integrity
+      - In Docker Universal Control Plane (Docker Enterprise)
+        - Can be enabled running only signed images by an specific company team
+    - Security Scanning
+      - Analyze image vulnerabilities and provides reports
+      - Available for private repos in Docker Hub and Docker Trusted Registry
+    - Swarm Mode
+      - Cryptographic node ID's
+      - Mutual authentication via TLS
+        - Certificate --> Signature --> Subjet
+          - O: Swarm ID
+          - OU: Swarm Role
+          - CN: Node ID
+      - Secure join tokens
+        - PREFIX + VERSION + SWARM ID + TOKEN
+        - SWMTKN-1-1-dmtwusdcdercrertu-dhwcehcxzpojlan
+      - CA configuration with automatic certificate rotation
+      - Encrypted cluster store
+        - Cluster config and state
+        - Based on etcd implementation
+        - Replicated to all managers
+      - Encrypted networks
+  - Linux
+    - seccomp
+      - Default (customizable) profile to limit syscall to the kernel
+    - Mandatory Access Control (MAC)
+      - Default (customizable) profile for AppArmor/SELinux
+    - Capabilities
+      - Set limits when acting as root users
+    - Control Groups (cgroups)
+      - Set limits for CPU, RAM and Disk I/O
+    - Kernel namespaces
+      - Allows to isolate networks and libraries
+        - pid: Process
+        - net: Network
+        - mnt: Mount Filesystem
+        - ipc: Inter-Process Communication (Shared memory access)
+        - uts: Hostname
+        - users: Optional
+- Daemon
+  - Deamon Mode: Daemon accepts only authenticated clients
+  - Client Mode: Client connect only to Daemon with valid certificates
+
+## Enterprise
+
+- Docker Enterprise Edition (EE)
+  - Components
+    - Docker Trusted Registry (DTR)
+      - Infrastructure
+        - Recommended 3 Instances
+        - Backup/Restore DTR info using container
+    - Docker Universal Control Plane (UCP)
+      - Infrastructure
+        - Recommended 3 or 5 Managers
+        - Backup/Restore swarm info using tar
+        - Backup/Restore UCP info using container
+    - Docker EE
+  - Features
+    - Role-based access control (RBAC)
+      - UCP and DTR use the database for principals
+      - Subject + Role + Collection (resources: Eg DEV, TEST, PROD) + Grant
+      - Grant: Who, What, Which
+      - Manages also nodes, allowing DEV deploy only in DEV machines
+    - Active Directory integration
+      - Sync against an external LDAP database
+    - Docker Content Trust (DCT)
+      - Enabled using export DOCKER_CONTENT_TRUST=1
+      - Keys (~/.docker/trust)
+        - Root Key
+        - Repository Key
+    - Docker Trusted Registry
+    - Image Promotion
+      - Policy-based promotion to other repos
+    - HTTP Routing Mesh (HRM)
+      - Application load balancer
+
 ## Commands
 
 - docker version
@@ -304,7 +441,7 @@
   - -f to specify a Dockerfile location
 - docker login
 - docker image tag current_tag new_tag
-  - docker image tag image:tag repository/image:tag
+- docker image tag image:tag repository/image:tag
 - docker image push image:tag
    docker network ls
 - docker-compose up
@@ -321,13 +458,18 @@
   - --advertise-addr: nodes should be connect to this IP
   - --listen-addr: ip use to listen for swarm traffic
 - docker node ls
-- docker swarm join-token worker
-- docker swarm join-token manager
+- docker node update
+  - --label-add-xxx=
+  - node
+- docker swarm join-token manager | worker
 - docker swarm join --token token
   - --advertise-addr: nodes should be connect to this IP
   - --listen-addr: ip use to listen for swarm traffic
-- docker swarm update --autolock=true
+- docker swarm update
+  - --autolock=true
+  - --cert-expiry
 - docker swarm unlock
+- docker swarm join-token --rotate manager | worker
 - docker service create
   - --name app_name
   - --p outside_port:inside_port
@@ -336,6 +478,7 @@
   - --network network_name
   - --log-driver driver
   - --log-opts opts
+  - --secret
   - image
 - docker service ls service_name
 - docker service ps service_name
@@ -349,14 +492,17 @@
   - --update-parallelism 2
   - --update-delay 20s
   - service_name
-- docker service logs service_name
+- docker service logs service_name | replica_id
   - --tail #lines
+  - --follow
+  - --tail
 - docker network inspect network_name
 - docker network create
   - -d type
   - subnet
   - ip-range
   - gateway
+  - -o encrypted (to encript data plane)
   - -o parent=host_interface
   - network_name
 - docker network prune
@@ -367,3 +513,15 @@
 - docker volume inspect volume_name
 - docker volume prune
 - docker volume rm
+- docker stack deploy
+  - -c docker-compose.yml
+  - stack_name
+- secrets
+  - openssl req -newkey rsa:4090 -nodes -sha -keyout domain.key -x509 -days 365 -out domain.crt
+- docker secret create secret_name domain.crt
+- echo staging | docker secret creat staging_token -
+- docker secret ls
+- docker stack deploy -c docker-file.yml stack_name
+- docker stack ls
+- docker stack ps stack_name
+- docker stack rm stack_name
