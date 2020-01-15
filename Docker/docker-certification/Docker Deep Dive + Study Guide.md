@@ -14,6 +14,15 @@
   - [Security](#security)
   - [Enterprise](#enterprise)
   - [Commands](#commands)
+    - [General](#general)
+    - [Docker Container](#docker-container)
+    - [Docker Images](#docker-images)
+    - [Docker Compose](#docker-compose)
+    - [Docker Swarm](#docker-swarm)
+    - [Docker Service](#docker-service)
+    - [Docker Network](#docker-network)
+    - [Docker Volume](#docker-volume)
+    - [Docker Stack](#docker-stack)
 
 ## Storage
 
@@ -120,13 +129,18 @@
 - Containerizing
 - Build context is the directory containing the app
 - Dockerfile
+  - ARG: Defines Variable. Metadata
   - FROM: Base image. Layer
   - LABEL: Metadata (eg. maintainer)
   - RUN: Execute commands. Layer
   - COPY: Copy app files. Layer
   - WORKDIR: Set working directory. Metadata
-  - EXPOSE: Expose networking ports. Metadata
-  - ENTRYPOINT: Set main app. Metadata
+  - EXPOSE: Documentacion about networking ports. Do not expose. Metadata
+  - ADD: Add files. Layer
+  - USER: UID/GID
+  - CMD: Provide defaults. Only one per Dockerfile. Metadata
+  - ENTRYPOINT: Set main app, run as executable. Metadata
+  - HEALTCHECK: How test container. Metadata
   - #: Use for comments
 - Required info to upload to Docker Hub
   - Registry
@@ -167,6 +181,10 @@
 
 ## Swarm
 
+- Quorum
+  - Raft consensus
+    - Failure tolerance: (N-1)/2
+    - Quorum: (N/2)+1
 - Node Types
   - managers
     - One is the Leader
@@ -188,7 +206,6 @@
   - host mode: Publish service only in the node running replicas
 - Facts
   - Pending service are services that can't be started (all nodes down, too much memory required, replicas=0)
-  - 
 
 ## Networking
 
@@ -393,9 +410,15 @@
 
 ## Commands
 
+### General
+
 - docker version
 - docker system info
-- docker save
+- docker system prune
+- docker attach container_id
+
+### Docker Container
+
 - docker container run -it image_name /bin/bash
   - Ctrl + PQ (exit without terminating container)
 - docker container ls
@@ -403,12 +426,16 @@
   - Attach terminal to container
 - docker container run image_name app
 - docker container run
-  - -d
+  - -d: Daemon mode
   - --name container_name
   - --publish outside_port:inside_port
   - --net-alias dns_name
   - --mount source=container_dir,target=host_dir
+  - --cidfile="": Write container ID to a file
+  - --rm -v: Remove volume
+  - --network network_name: Only one
   - image_name
+  - command
 - docker container stop container_id
 - docker container rm container_id
 - docker container rm -f container_id
@@ -418,6 +445,9 @@
 - docker container inspect container_id
   - --format='{{range.NetworkSettings.Network}}{{.IPAddress}}{{end}}'
 - docker container logs container_id
+
+### Docker Images
+
 - docker image pull image_name
 - docker image pull -a image_name
   - Pull all tags
@@ -443,7 +473,11 @@
 - docker image tag current_tag new_tag
 - docker image tag image:tag repository/image:tag
 - docker image push image:tag
-   docker network ls
+- docker image save
+- docker image load
+
+### Docker Compose
+
 - docker-compose up
   - -f specify a different compose file
   - -d daemon mode
@@ -454,22 +488,38 @@
 - docker-compose stop
 - docker-compose rm
 - docker-compose restart
+
+### Docker Swarm
+
 - docker swarm init
-  - --advertise-addr: nodes should be connect to this IP
-  - --listen-addr: ip use to listen for swarm traffic
+  - --advertise-addr IP: nodes should be connect to this IP
+  - --listen-addr IP: ip use to listen for swarm traffic
+  - --autolock: initialize with lock feature
 - docker node ls
 - docker node update
   - --label-add-xxx=
+  - --label-rm
+  - --role
   - node
+- docker node inspect
+- docker node ps
+- docker node rm
+- docker node demote | promote
 - docker swarm join-token manager | worker
 - docker swarm join --token token
   - --advertise-addr: nodes should be connect to this IP
   - --listen-addr: ip use to listen for swarm traffic
 - docker swarm update
-  - --autolock=true
+  - --autolock=true | false
   - --cert-expiry
+- docker swarm unlock-key
+  - --rotate
 - docker swarm unlock
+  - after prompt provide unlock key
 - docker swarm join-token --rotate manager | worker
+
+### Docker Service
+
 - docker service create
   - --name app_name
   - --p outside_port:inside_port
@@ -479,40 +529,54 @@
   - --log-driver driver
   - --log-opts opts
   - --secret
+  - --mount
   - image
-- docker service ls service_name
+- docker service ls
 - docker service ps service_name
 - docker service inspect service_name
   - --pretty
   - --mode global
-- docker service scale name=#replicas
+- docker service scale service_name=#replicas
 - docker service rm service_name
 - docker service update
   - --image image_name
   - --update-parallelism 2
   - --update-delay 20s
+  - --replicas
   - service_name
 - docker service logs service_name | replica_id
   - --tail #lines
   - --follow
   - --tail
+- docker service rollback
+
+### Docker Network
+
+- docker network ls
 - docker network inspect network_name
 - docker network create
-  - -d type
-  - subnet
+  - --driver type
+  - --subnet
   - ip-range
-  - gateway
+  - --gateway
   - -o encrypted (to encript data plane)
   - -o parent=host_interface
   - network_name
 - docker network prune
 - docker network rm network_name
 - docker port container_id
+- docker network connect network_name container_id
+
+### Docker Volume
+
 - docker volume create volume_name
 - docker volume ls
 - docker volume inspect volume_name
 - docker volume prune
 - docker volume rm
+
+### Docker Stack
+
 - docker stack deploy
   - -c docker-compose.yml
   - stack_name
@@ -524,4 +588,5 @@
 - docker stack deploy -c docker-file.yml stack_name
 - docker stack ls
 - docker stack ps stack_name
+- docker stack services stack_name
 - docker stack rm stack_name
