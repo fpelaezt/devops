@@ -119,6 +119,13 @@
   - Registry API supports manifest list and manifest
     - manifest list: architecture
     - manifest: layers
+- Build
+  - Engines
+    - Legacy build engine
+      - docker build
+    - Powered build engine (Moby buildkit)
+      - export DOCKER_BUILDKIT=1
+      - Faster/Flexible/Concurrent
 
 ## Containers
 
@@ -130,16 +137,25 @@
 - Build context is the directory containing the app
 - Dockerfile
   - ARG: Defines Variable. Metadata
+    - Can be overriden from command line using --build-arg
   - FROM: Base image. Layer
+  - ENV: Environmental variable. Metadata
   - LABEL: Metadata (eg. maintainer)
   - RUN: Execute commands. Layer
-  - COPY: Copy app files. Layer
-  - WORKDIR: Set working directory. Metadata
+    - shell: RUN command
+    - exec: RUN ["executable", "param1", "param2"]
+  - WORKDIR: Location for RUN/CMD/ENTRYPOINT/ADD/COPY commands. Metadata
+    - Multiple WORKDIR are relative to the previous
   - EXPOSE: Documentacion about networking ports. Do not expose. Metadata
-  - ADD: Add files. Layer
-  - USER: UID/GID
-  - CMD: Provide defaults. Only one per Dockerfile. Metadata
-  - ENTRYPOINT: Set main app, run as executable. Metadata
+  - ADD: Add files or URL's. Invalidate cache. Layer
+  - COPY*: Copy files. Layer
+  - USER: UID/GID for RUN/CMD/ENTRYPOINT commands
+  - CMD: Provide defaults. Easy to override. Only one per Dockerfile. Metadata
+    - shell: command param1 param2
+    - exec: ["executable", "param1", "param2"]*
+    - Parameters to Entrypoint: ["param1", "param2"]
+  - ENTRYPOINT: Set main app, run as executable. Difficult to override. Metadata
+  - ONBUILD: Use a a trigger for later builds of child images
   - HEALTCHECK: How test container. Metadata
   - #: Use for comments
 - Required info to upload to Docker Hub
@@ -266,8 +282,14 @@
 - Service Discovery
   - Allows containers and swarm services locate containers by name in the same network
   - Uses an internal DNS service
-  - Custom dns with --dns and -dns-search flags
+  - Custom
+    - Run container with --dns and -dns-search flags
+    - Edit /etc/docker/daemon.js with "dns":["ip1", "ip2"]
 - Ingress Load Balancing
+- Facts
+  - With Swarms two networks are created by default
+    - ingress: control, data traffic
+    - docker_gwbridge: Connect individual containers
 
 ## Volumes
 
@@ -374,6 +396,9 @@
 - Daemon
   - Deamon Mode: Daemon accepts only authenticated clients
   - Client Mode: Client connect only to Daemon with valid certificates
+- Scan
+  - Trivi by Aqua (scan images for vulnerabilities)
+    - --ignored-unfixed --severity HIGH,CRITICAL, --skip-update
 
 ## Enterprise
 
@@ -413,9 +438,12 @@
 ### General
 
 - docker version
-- docker system info
+- docker info | system info
+  - Provides: # containers, # images, drivers, swarm, version
 - docker system prune
 - docker attach container_id
+- docker trust key generate
+- docker stats
 
 ### Docker Container
 
@@ -426,7 +454,7 @@
   - Attach terminal to container
 - docker container run image_name app
 - docker container run
-  - -d: Daemon mode
+  - -d: daemon mode
   - --name container_name
   - --publish outside_port:inside_port
   - --net-alias dns_name
@@ -434,6 +462,8 @@
   - --cidfile="": Write container ID to a file
   - --rm -v: Remove volume
   - --network network_name: Only one
+  - --dns dns_ip
+  - --entrypoint
   - image_name
   - command
 - docker container stop container_id
@@ -455,9 +485,10 @@
 - docker image ls
 - docker image ls --filter dangling=true
 - docker image ls --filter=reference="*:latest"
-- docker image ls --format "{{.Repository}}: {{.Tag}}: {{.Size}}
+- docker image ls --format "{{.Repository}}: {{.Tag}}: {{.Size}}"
 - docker image ls --digests image:name
 - docker image build -t image_name .
+  - -f to specify a Dockerfile location
 - docker image rm image_id
 - docker image rm $(docker image ls -q) -f
 - docker image prune
@@ -467,8 +498,6 @@
 - docker search image_name
 - docker search image_name --filter "is-official=true"
 - docker search image_name --filter "is-automated=true" --limit=5
-- docker image build -t image:tag .
-  - -f to specify a Dockerfile location
 - docker login
 - docker image tag current_tag new_tag
 - docker image tag image:tag repository/image:tag
@@ -530,25 +559,31 @@
   - --log-opts opts
   - --secret
   - --mount
+    - 'type=,source=,target=,volume-driver='
+  - --mode global
+  - --placemenent-pref 'spread=node.labels.XXX'
+  - --constraint 'node.labels.XXX'
   - image
 - docker service ls
+  - Reply: ID, Name, Mode (replicated/global), # Replicas
 - docker service ps service_name
+  - Reply: ID, Name, Image, Running Node, State, History
 - docker service inspect service_name
   - --pretty
-  - --mode global
 - docker service scale service_name=#replicas
 - docker service rm service_name
 - docker service update
   - --image image_name
   - --update-parallelism 2
   - --update-delay 20s
-  - --replicas
+  - --replicas=#
+  - --network-add
   - service_name
 - docker service logs service_name | replica_id
   - --tail #lines
   - --follow
   - --tail
-- docker service rollback
+- docker service rollback service_name
 
 ### Docker Network
 
@@ -582,11 +617,13 @@
   - stack_name
 - secrets
   - openssl req -newkey rsa:4090 -nodes -sha -keyout domain.key -x509 -days 365 -out domain.crt
-- docker secret create secret_name domain.crt
-- echo staging | docker secret creat staging_token -
-- docker secret ls
 - docker stack deploy -c docker-file.yml stack_name
 - docker stack ls
 - docker stack ps stack_name
 - docker stack services stack_name
+  - --filter name=service_name
+  - --format "{{.ID}}: {{.Mode}} {{.Replicas}}"
 - docker stack rm stack_name
+- docker secret create secret_name domain.crt
+- echo staging | docker secret create staging_token -
+- docker secret ls
