@@ -136,27 +136,37 @@
 - Containerizing
 - Build context is the directory containing the app
 - Dockerfile
-  - ARG: Defines Variable. Metadata
+  - ARG: Defines Variable
     - Can be overriden from command line using --build-arg
   - FROM: Base image. Layer
-  - ENV: Environmental variable. Metadata
+  - ENV: Environmental variable
   - LABEL: Metadata (eg. maintainer)
   - RUN: Execute commands. Layer
     - shell: RUN command
     - exec: RUN ["executable", "param1", "param2"]
-  - WORKDIR: Location for RUN/CMD/ENTRYPOINT/ADD/COPY commands. Metadata
+  - WORKDIR: Location for RUN/CMD/ENTRYPOINT/ADD/COPY commands
     - Multiple WORKDIR are relative to the previous
-  - EXPOSE: Documentacion about networking ports. Do not expose. Metadata
+  - EXPOSE: Documentacion about networking ports. Do not expose
   - ADD: Add files or URL's. Invalidate cache. Layer
   - COPY*: Copy files. Layer
   - USER: UID/GID for RUN/CMD/ENTRYPOINT commands
-  - CMD: Provide defaults. Easy to override. Only one per Dockerfile. Metadata
+  - CMD: Provide defaults. Easy to override. Only one per Dockerfile
     - shell: command param1 param2
     - exec: ["executable", "param1", "param2"]*
     - Parameters to Entrypoint: ["param1", "param2"]
-  - ENTRYPOINT: Set main app, run as executable. Difficult to override. Metadata
+  - ENTRYPOINT: Set main app, run as executable. Difficult to override
   - ONBUILD: Use a a trigger for later builds of child images
-  - HEALTCHECK: How test container. Metadata
+  - HEALTCHECK: How test container
+    - If used, container can become healthy | unhealthy
+    - Only one is possible
+    - Options before CMD
+      - --interval=30*
+      - --timeout=30*
+      - --start-period=0*
+      - --retries=3*
+  - STOPSIGNAL: Signal #
+  - SHELL: Set default shell
+    - ["/bin/sh", "-c"] Linux* | ["cmd", "/S", "/C"] Windows*
   - #: Use for comments
 - Required info to upload to Docker Hub
   - Registry
@@ -181,6 +191,7 @@
   - Docker daemon have a priority to avoid kernel kill it when there's a memory issue
   - Docker containers doesn't have that priority
   - Limits can be set at Memory, CPUs or GPUs
+  - Use .dockerignore to ignore files
 
 ## Compose
 
@@ -230,7 +241,7 @@
     - Sandboxes: Isolated stacks. Ethernet interfaces, port, routes, dns
     - Endpoints: Virtual interfaces. Connect Sandbox to Network
     - Networks: Software 802.1d bridge (switch)
-  - libnetwork: CNM docker implemenentation written on Go
+  - libnetwork: CNM docker implementation written on Go
     - service discovery
     - network control plane
     - management plane
@@ -332,7 +343,7 @@
             - node.id | node.hostname | node.role | engine.labels.operatingsystem | node.labels.zone
         - replicas
         - update_config
-          - parallelism
+          - parallelism #container to rollback at a time
           - failure_action: rollback | pause* | continue
         - restart_policy
           - condition: on-failure | always
@@ -363,7 +374,7 @@
     - Swarm Mode
       - Cryptographic node ID's
       - Mutual authentication via TLS
-        - Certificate --> Signature --> Subjet
+        - Certificate --> Signature --> Subject
           - O: Swarm ID
           - OU: Swarm Role
           - CN: Node ID
@@ -405,14 +416,12 @@
 - Docker Enterprise Edition (EE)
   - Components
     - Docker Trusted Registry (DTR)
-      - Infrastructure
-        - Recommended 3 Instances
-        - Backup/Restore DTR info using container
+      - Recommended 3 Instances
+      - Backup/Restore DTR info using container
     - Docker Universal Control Plane (UCP)
-      - Infrastructure
-        - Recommended 3 or 5 Managers
-        - Backup/Restore swarm info using tar
-        - Backup/Restore UCP info using container
+      - Recommended 3 or 5 Managers
+      - Backup/Restore swarm info using tar
+      - Backup/Restore UCP info using container
     - Docker EE
   - Features
     - Role-based access control (RBAC)
@@ -427,7 +436,6 @@
       - Keys (~/.docker/trust)
         - Root Key
         - Repository Key
-    - Docker Trusted Registry
     - Image Promotion
       - Policy-based promotion to other repos
     - HTTP Routing Mesh (HRM)
@@ -464,6 +472,7 @@
   - --network network_name: Only one
   - --dns dns_ip
   - --entrypoint
+  - --env
   - image_name
   - command
 - docker container stop container_id
@@ -496,14 +505,16 @@
 - docker image inspect image_name
 - docker image history image_name
 - docker search image_name
-- docker search image_name --filter "is-official=true"
-- docker search image_name --filter "is-automated=true" --limit=5
+- docker search image_name
+  - --filter "is-official=true"
+  - --filter "is-automated=true"
+  - --limit=5
 - docker login
 - docker image tag current_tag new_tag
 - docker image tag image:tag repository/image:tag
 - docker image push image:tag
-- docker image save
-- docker image load
+- docker image save -o | --output
+- docker image load -i | --input
 
 ### Docker Compose
 
@@ -535,7 +546,8 @@
 - docker node rm
 - docker node demote | promote
 - docker swarm join-token manager | worker
-- docker swarm join --token token
+- docker swarm join
+  - --token token
   - --advertise-addr: nodes should be connect to this IP
   - --listen-addr: ip use to listen for swarm traffic
 - docker swarm update
