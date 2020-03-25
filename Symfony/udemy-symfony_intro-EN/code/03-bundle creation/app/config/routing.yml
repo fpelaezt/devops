@@ -1,0 +1,6 @@
+zenva_workout:
+    resource: "@ZenvaWorkoutBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+

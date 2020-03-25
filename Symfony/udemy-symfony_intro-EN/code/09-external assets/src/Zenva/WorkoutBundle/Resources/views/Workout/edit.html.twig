@@ -1,0 +1,28 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Edit Workout</h1>
+
+    <form action="{{ path('workout_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+        <div class="row top-buffer">
+        <input type="hidden" name="_method" value="PUT" />
+        {{ form_widget(edit_form) }}
+        </div>
+        <div class="row top-buffer">
+            <div class="span3">
+                <button type="submit" class="btn btn-large btn-block btn-success">Save</a>
+            </div>
+            <div class="span3">
+                <a href="{{ path('workout') }}" class="btn btn-large btn-block btn-default">Back</a>
+            </div>
+            
+    </form>
+    <div class="span3">
+                <form action="{{ path('workout_delete', { 'id': entity.id }) }}" method="post">
+                    <input type="hidden" name="_method" value="DELETE" />
+                    {{ form_widget(delete_form) }}
+                    <button type="submit" class="btn btn-large btn-block btn-warning">Delete</button>
+                </form>
+            </div>
+        </div>
+{% endblock %}

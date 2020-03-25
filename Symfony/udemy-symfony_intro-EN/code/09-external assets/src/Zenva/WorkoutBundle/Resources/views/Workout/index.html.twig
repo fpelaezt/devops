@@ -1,0 +1,44 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Workout Sessions</h1>
+    
+    <div class="row top-buffer">
+        <div class="span3">
+            <a href="{{ path('workout_new') }}" class="btn btn-large btn-block btn-primary">New Workout</a>
+        </div>
+    </div>
+    
+    <div class="row top-buffer">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Activity</th>
+                    <th>Hours</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for entity in entities %}
+                <tr>
+                    <td>{% if entity.occurrenceDate %}{{ entity.occurrenceDate|date('Y-m-d') }}{% endif %}</td>
+                    <td>{{ entity.activity }}</td>
+                    <td>{{ entity.hours }}</td>
+                    <td>
+                    <ul>
+                        <div class="span2">
+                            <a href="{{ path('workout_show', { 'id': entity.id }) }}" class="btn btn-large btn-block btn-default">View</a>
+                        </div>
+                        <div class="span2">
+                            <a href="{{ path('workout_edit', { 'id': entity.id }) }}" class="btn btn-large btn-block btn-inverse">Edit</a>
+                        </div>
+                    </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% endblock %}

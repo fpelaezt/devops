@@ -1,0 +1,18 @@
+//including a template
+/**
+* @Route("/hello/")
+* @Template("ZenvaWorkoutBundle:Default:other.html.twig")
+*/
+public function indexAction()
+{
+return array('name' => 'peter');
+}
+
+//text/html response
+$response = new Response('<strong>hello</strong> world');
+return $response;
+
+//AJAX example
+$response = new Response(json_encode(array('name' => 'your name')));
+$response->headers->set('Content-Type', 'application/json');
+return $response;

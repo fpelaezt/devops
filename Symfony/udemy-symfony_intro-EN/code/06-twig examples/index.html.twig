@@ -1,0 +1,25 @@
+this is a variable {{name|upper}}
+
+the length of an array: {{workouts|length}}
+
+{# enter comments #}
+
+{% if age == 100 %}
+this will be shown if the age is 99
+
+{% elseif age == 0 %}
+the person is 0
+
+{% else %}
+something else
+{% endif %}
+
+{% for workout in workouts if workout.hours > 1 %}
+
+<div>
+{{workout.activity}}
+</div>
+
+{% endfor %}
+
+<a href="{{path('workout_index')}}">a link</a>

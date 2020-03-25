@@ -1,0 +1,45 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <h1>Workout list</h1>
+
+    <table class="records_list">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Occurrencedate</th>
+                <th>Activity</th>
+                <th>Hours</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td><a href="{{ path('workoutcrud_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                <td>{% if entity.occurrenceDate %}{{ entity.occurrenceDate|date('Y-m-d') }}{% endif %}</td>
+                <td>{{ entity.activity }}</td>
+                <td>{{ entity.hours }}</td>
+                <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('workoutcrud_show', { 'id': entity.id }) }}">show</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('workoutcrud_edit', { 'id': entity.id }) }}">edit</a>
+                    </li>
+                </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+        <ul>
+        <li>
+            <a href="{{ path('workoutcrud_new') }}">
+                Create a new entry
+            </a>
+        </li>
+    </ul>
+    {% endblock %}

@@ -1,0 +1,19 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>New Workout</h1>
+
+    <form action="{{ path('workout_create') }}" method="post" {{ form_enctype(form) }}>
+        <div class="row top-buffer">
+        {{ form_widget(form) }}
+        </div>
+        <div class="row top-buffer">
+            <div class="span3">
+                <button type="submit" class="btn btn-large btn-block btn-success">Create</a>
+            </div>
+            <div class="span3">
+                <a href="{{ path('workout') }}" class="btn btn-large btn-block btn-default">Back</a>
+            </div>
+        </div>
+    </form>
+{% endblock %}
