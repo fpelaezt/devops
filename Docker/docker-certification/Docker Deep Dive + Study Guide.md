@@ -558,6 +558,8 @@
 - docker swarm unlock
   - after prompt provide unlock key
 - docker swarm join-token --rotate manager | worker
+- docker swarm leave
+  - --force
 
 ### Docker Service
 
