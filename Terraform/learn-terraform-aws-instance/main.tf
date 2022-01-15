@@ -1,8 +1,8 @@
 terraform {
   cloud {
-    organization = "<ORG_NAME>"
+    organization = "fpelaezt"
     workspaces {
-      name = "Example-Workspace"
+      name = "workspace-devops"
     }
   }
 
