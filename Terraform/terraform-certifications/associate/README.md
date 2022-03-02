@@ -32,6 +32,16 @@
 
 * terraform.tfvars: Variables
 
+### Outputs
+
+* Printing outputs
+
+  ```
+    output "output_name" {
+      value: resorce_type.resource_name.<optional attribute>
+    }
+  ```
+
 ### Commands
 
 * terraform init
