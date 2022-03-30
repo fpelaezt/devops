@@ -42,12 +42,73 @@
     }
   ```
 
+### Concepts
+
+* Variables
+  * Types
+    * strings: "abcd"
+    * number: 1
+    * list: ['a', 'b', 'c']
+    * map: { a = 'A', b = 'B', c = 'C'}
+  * Use
+    * Use map: var.types['a']
+    * Use list: var.list[1]
+
+* Conditions
+  * if
+    ```
+    count = var.flag == true ? 2 : 1
+    ```
+
+* Local Values
+  * Example
+    ```
+    * locals {
+        common_tags = {
+          Owner = "Team 1",
+          service = "engineer"
+        }
+      }
+    ```
+
+* Functions
+  * Terraform only support built-in functions
+  * count, zipmap, distinct, flatten, merge, lenght, formatdate
+
+* Dynamic Blocks
+  * Example
+    ```
+    variable "ports" {
+        type: list(number)
+        default: [80, 443, 8080]
+      }
+
+    dynamic ingress {
+      for_each = var.ports
+      iterator = port
+      content {
+        from_port: port.value
+      }
+    }
+    ```
+
+* Provisioners
+Allow to run commands in a VM (useful to install packages).
+Can be run according to conditions (start/stop resource)
+If the provisioner failed, the resource is marked as Tainted
+  * on_failure: continue (avoid taint resources)
+
+* Splat Expression
+Works as a comodin
+  * value. = aws_iam_user.res1[*].arn
+
 ### Commands
 
 * terraform init
 * terraform init -upgrade
 * terraform plan
 * terraform plan -var-file .env
+* terraform plan -out=file
 * terraform apply
 * terraform apply --auto-approve
 * terraform apply -var-file .env
@@ -60,3 +121,7 @@
 * terraform state show <resource>
 * terraform refresh
 * terraform output
+* terraform fmt
+* terraform validate
+* terraform taing <resource>
+* terraform console
