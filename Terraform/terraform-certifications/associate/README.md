@@ -4,16 +4,14 @@
 
 * IaC: Improve productivity, Avoid Human error, Consistency configuration
 
-## Terraform
-
-* Features
-    * Execution plans
-    * Resource graph
-    * Change automation
-    * Multiple cloud platforms, Human readable configuration, track resources changes
+## Features
+* Execution plans
+* Resource graph
+* Change automation
+* Multiple cloud platforms, Human readable configuration, track resources changes
 * Workflow: Write - Plan - Apply
 
-### Providers
+## Providers
 
 * Plugins to interact with cloud providers
 * Use required_providers when the provider is not developed by hashicorp
@@ -23,86 +21,127 @@
   * <= 3.6: Less or equal than 3.6
   * > 3.2, < 3.6: Greater than 3.2 and Less than 3.6
 
-### Resources
+## Resources
 
 * resource definition
   * <provider>_<resource_type> <name> { key: value ] }
 
-### Default files
+## Default files
 
 * terraform.tfvars: Variables
 
-### Outputs
+## Outputs
 
 * Printing outputs
 
   ```
-    output "output_name" {
-      value: resorce_type.resource_name.<optional attribute>
-    }
+  output "output_name" {
+    value: resorce_type.resource_name.<optional attribute>
+  }
   ```
 
-### Concepts
+## Concepts
 
-* Variables
-  * Types
-    * strings: "abcd"
-    * number: 1
-    * list: ['a', 'b', 'c']
-    * map: { a = 'A', b = 'B', c = 'C'}
-  * Use
-    * Use map: var.types['a']
-    * Use list: var.list[1]
+### Variables
 
-* Conditions
-  * if
-    ```
-    count = var.flag == true ? 2 : 1
-    ```
+* Types
+  * strings: "abcd"
+  * number: 1
+  * list: ['a', 'b', 'c']
+  * map: { a = 'A', b = 'B', c = 'C'}
+* Use
+  * Use map: var.types['a']
+  * Use list: var.list[1]
 
-* Local Values
-  * Example
-    ```
-    * locals {
-        common_tags = {
-          Owner = "Team 1",
-          service = "engineer"
-        }
-      }
-    ```
+### Conditions
 
-* Functions
-  * Terraform only support built-in functions
-  * count, zipmap, distinct, flatten, merge, lenght, formatdate
+* if
+  ```
+  count = var.flag == true ? 2 : 1
+  ```
 
-* Dynamic Blocks
-  * Example
-    ```
-    variable "ports" {
-        type: list(number)
-        default: [80, 443, 8080]
-      }
+### Local Values
 
-    dynamic ingress {
-      for_each = var.ports
-      iterator = port
-      content {
-        from_port: port.value
-      }
+* Example
+  ```
+  locals {
+    common_tags = {
+      Owner = "Team 1",
+      service = "engineer"
     }
-    ```
+  }
+  ```
 
-* Provisioners
+### Functions
+
+* Terraform only support built-in functions
+* count, zipmap, distinct, flatten, merge, lenght, formatdate
+
+### Dynamic Blocks
+
+* Example
+  ```
+  variable "ports" {
+    type: list(number)
+    default: [80, 443, 8080]
+  }
+
+  dynamic ingress {
+    for_each = var.ports
+    iterator = port
+    content {
+      from_port: port.value
+    }
+  }
+  ```
+
+### Provisioners
+
 Allow to run commands in a VM (useful to install packages).
 Can be run according to conditions (start/stop resource)
 If the provisioner failed, the resource is marked as Tainted
-  * on_failure: continue (avoid taint resources)
+* on_failure: continue (avoid taint resources)
 
-* Splat Expression
+### Splat Expression
+
 Works as a comodin
-  * value. = aws_iam_user.res1[*].arn
 
-### Commands
+* value. = aws_iam_user.res1[*].arn
+
+## Modules
+
+Collection of .tf files that can be referred from other .tf files
+
+### Modules Sources
+
+* Local paths
+* Registry
+* Git
+* S3 Buckets
+
+* Example
+  ```
+  module "my-demo" {
+    source: "github.com/exampe"
+  }
+  ```
+
+## Import Resources
+
+Allows to import resources already created in the cloud
+
+## Remote State Management
+
+* Options
+  * Cloud Storage
+  * Terraform cloud
+
+## Workspaces
+
+Allow to handle virtual environments having a set of variables
+
+
+## Commands
 
 * terraform init
 * terraform init -upgrade
@@ -125,3 +164,4 @@ Works as a comodin
 * terraform validate
 * terraform taing <resource>
 * terraform console
+* terraform import <resource>.<resource_name> <instance_id>
