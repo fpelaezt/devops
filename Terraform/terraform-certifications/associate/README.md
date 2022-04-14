@@ -81,6 +81,18 @@
       }
       ```
   * module
+    * Collection of .tf files that can be referred from other .tf files
+    * Sources
+      * Local paths
+      * Registry
+      * Git
+      * S3 Buckets
+      * Example
+        ```
+        module "my-demo" {
+          source: "github.com/exampe"
+        }
+        ```
   * providers
   * terraform
 
@@ -132,30 +144,6 @@ Can be run according to conditions (start/stop resource)
 If the provisioner failed, the resource is marked as Tainted
 * on_failure: continue (avoid taint resources)
 
-### Splat Expression
-
-Works as a comodin
-
-* value. = aws_iam_user.res1[*].arn
-
-## Modules
-
-Collection of .tf files that can be referred from other .tf files
-
-### Modules Sources
-
-* Local paths
-* Registry
-* Git
-* S3 Buckets
-
-* Example
-  ```
-  module "my-demo" {
-    source: "github.com/exampe"
-  }
-  ```
-
 ## Import Resources
 
 Allows to import resources already created in the cloud
@@ -170,6 +158,13 @@ Allows to import resources already created in the cloud
 
 Allow to handle virtual environments having a set of variables
 
+### Expressions
+
+#### Splat Expression
+
+Works as a comodin
+
+* value. = aws_iam_user.res1[*].arn
 
 ## Commands
 
@@ -182,17 +177,17 @@ Allow to handle virtual environments having a set of variables
 * terraform apply
 * terraform apply --auto-approve
 * terraform apply -var-file .env
-* terraform apply -target <resource>
+* terraform apply -target <_resource_>
 * terraform apply -var "key=value"
 * terraform destroy
 * terraform destroy --auto-approve
-* terraform destroy -target <resource>
+* terraform destroy -target <_resource_>
 * terraform state list
-* terraform state show <resource>
+* terraform state show <_resource_>
 * terraform refresh
 * terraform output
 * terraform fmt
 * terraform validate
-* terraform taing <resource>
+* terraform taint <_resource_>
 * terraform console
-* terraform import <resource>.<resource_name> <instance_id>
+* terraform import <_resource_>.<resource_name> <instance_id>
