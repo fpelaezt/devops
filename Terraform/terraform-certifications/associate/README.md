@@ -11,6 +11,79 @@
 * Multiple cloud platforms, Human readable configuration, track resources changes
 * Workflow: Write - Plan - Apply
 
+## Syntax
+
+* Block: Container of objects. Block have a type and optional labels
+* Identifier: Arguments names
+* Expression: Arguments values
+
+```
+<BLOCK TYPE> "<BLOCK LABEL>" "<BLOCK LABEL>" {
+  # Block body
+  <IDENTIFIER> = <EXPRESSION> # Argument
+}
+```
+
+* Block Types
+  * resources
+    * syntax: <provider>_<resource_type> <name>
+    * meta-arguments
+      * depends_on: handle hidden dependencies
+      * count: handle multiple resource
+      * for_each: handle multiple instances according to a map or set of strings
+        * Example
+          ```
+          variable "ports" {
+            type: list(number)
+            default: [80, 443, 8080]
+          }
+          dynamic ingress {
+            for_each = var.ports
+            iterator = port
+            content {
+              from_port: port.value
+            }
+          }
+          ```
+      * provider: handle non-default provider config
+      * lifecycle: [create_before_destroy, prevent_destroy, ignore_changes]
+      * provisioner: handle extra actions
+    * timeouts: Control timers
+  * data
+  * variables
+    * Arguments
+      * default: default value
+      * type: value type
+      * description: documentation
+      * validation: validation rules
+      * sensitive: limits Terraform UI output
+      * nullable: defines if can be null
+    * Precenden: Environment variables, terraform.tfvars, -var | -var-file
+  * output
+    * Arguments
+      * value
+      * description
+      * sensitive
+    * Example
+        ```
+        output "output_name" {
+          value: resorce_type.resource_name.<optional attribute>
+        }
+        ```
+  * local
+    * Example
+      ```
+      locals {
+        common_tags = {
+          Owner = "Team 1",
+          service = "engineer"
+        }
+      }
+      ```
+  * module
+  * providers
+  * terraform
+
 ## Providers
 
 * Plugins to interact with cloud providers
@@ -21,24 +94,11 @@
   * <= 3.6: Less or equal than 3.6
   * > 3.2, < 3.6: Greater than 3.2 and Less than 3.6
 
-## Resources
-
-* resource definition
-  * <provider>_<resource_type> <name> { key: value ] }
-
 ## Default files
 
 * terraform.tfvars: Variables
-
-## Outputs
-
-* Printing outputs
-
-  ```
-  output "output_name" {
-    value: resorce_type.resource_name.<optional attribute>
-  }
-  ```
+* _override.tf | _override.tf.json: Overwrite specific portions of resources
+* .terraform.lock.hcl: Track provider dependencies
 
 ## Concepts
 
@@ -60,40 +120,10 @@
   count = var.flag == true ? 2 : 1
   ```
 
-### Local Values
-
-* Example
-  ```
-  locals {
-    common_tags = {
-      Owner = "Team 1",
-      service = "engineer"
-    }
-  }
-  ```
-
 ### Functions
 
 * Terraform only support built-in functions
 * count, zipmap, distinct, flatten, merge, lenght, formatdate
-
-### Dynamic Blocks
-
-* Example
-  ```
-  variable "ports" {
-    type: list(number)
-    default: [80, 443, 8080]
-  }
-
-  dynamic ingress {
-    for_each = var.ports
-    iterator = port
-    content {
-      from_port: port.value
-    }
-  }
-  ```
 
 ### Provisioners
 
@@ -148,6 +178,7 @@ Allow to handle virtual environments having a set of variables
 * terraform plan
 * terraform plan -var-file .env
 * terraform plan -out=file
+* terraform graph
 * terraform apply
 * terraform apply --auto-approve
 * terraform apply -var-file .env
