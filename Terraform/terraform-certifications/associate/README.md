@@ -5,11 +5,11 @@
 * IaC: Improve productivity, Avoid Human error, Consistency configuration
 
 ## Features
+
 * Execution plans
 * Resource graph
 * Change automation
 * Multiple cloud platforms, Human readable configuration, track resources changes
-* Workflow: Write - Plan - Apply
 
 ## Syntax
 
@@ -29,7 +29,7 @@
     * syntax: <_provider> <_resource_type> <_name>
     * meta-arguments
       * depends_on: handle hidden dependencies
-      * count: handle multiple resource
+      * count: handle multiple resources
       * for_each: handle multiple instances according to a map or set of strings
         * Example
           ```
@@ -58,7 +58,7 @@
       * validation: validation rules
       * sensitive: limits Terraform UI output
       * nullable: defines if can be null
-    * Precedense: Environment variables, terraform.tfvars, -var | -var-file
+    * Precedence: Environment variables, terraform.tfvars, -var | -var-file
   * output
     * Arguments
       * value
@@ -67,7 +67,7 @@
     * Example
         ```
         output "output_name" {
-          value: resorce_type.resource_name.<_optional attribute>
+          value: <_resorce_type>.<_resource_name>.<_optional attribute>
         }
         ```
   * local
@@ -75,7 +75,7 @@
       ```
       locals {
         common_tags = {
-          Owner = "Team 1",
+          Owner = "Team 1"
           service = "engineer"
         }
       }
@@ -90,7 +90,7 @@
       * Example
         ```
         module "my-demo" {
-          source: "github.com/exampe"
+          source: "github.com/example"
         }
         ```
   * providers
@@ -118,7 +118,7 @@
 * Use required_providers when the provider is not developed by hashicorp
 * Versioning
   * File terraform.lock.hcl keeps track of provider versioning constraints
-  * ~> 3.6: Greater than 3
+  * ~> 3.6: Greater than 3.6 and lower than 4.0
   * <= 3.6: Less or equal than 3.6
   * > 3.2, < 3.6: Greater than 3.2 and Less than 3.6
 
@@ -144,21 +144,9 @@
   * Use map: var.types['a']
   * Use list: var.list[1]
 
-### Conditions
-
-* if
-  ```
-  count = var.flag == true ? 2 : 1
-  ```
-
-### Functions
-
-* Terraform only support built-in functions
-* count, zipmap, distinct, flatten, merge, lenght, formatdate
-
 ### Provisioners
 
-Allow to run commands in a VM (useful to install packages).
+Allow to run commands in a VM (useful to install packages)
 Can be run according to conditions (start/stop resource)
 If the provisioner failed, the resource is marked as Tainted
 * on_failure: continue (avoid taint resources)
@@ -174,7 +162,7 @@ If the provisioner failed, the resource is marked as Tainted
       * working_dir
       * interpreter
       * environment: key-value object
-  * file: copy fikes
+  * file: copy files
 
 ## Import Resources
 
@@ -189,7 +177,6 @@ Allows to import resources already created in the cloud
   * Standard Backend
     * S3, Azurerm, manta, http, oss, pg, etcd, swift, kubernetes, consul, etc
 
-
 ## Remote State Management
 
 * Options
@@ -201,7 +188,17 @@ Allows to import resources already created in the cloud
 * Allow to handle virtual environments having a set of variables
 * Can be attached to only one repository
 
-## Expressions
+## Expressions/Functions
+
+* Terraform only support built-in functions
+* min, max, count, zipmap, distinct, flatten, merge, lenght, formatdate
+
+### Conditionals
+
+* if
+  ```
+  count = var.flag == true ? 2 : 1
+  ```
 
 ### Splat Expression
 
@@ -302,7 +299,7 @@ Works as a comodin
 * terraform state list
 * terraform state list <_resource>
 * terraform state list -id=<_resource_id>
-* terraform state show <_resource_>
+* terraform state show <_resource>
 * terraform state rm
 * terraform state mv
 * terraform refresh
@@ -314,9 +311,9 @@ Works as a comodin
 * terraform console
 * terraform import <_resource_>.<_resource_name> <_resource_id>
 * terraform workspace
-* terraform workspacw show
-* terraform workspacw new <_workspace_name>
-* terraform workspacw select <_workspace_name>
+* terraform workspace show
+* terraform workspace new <_workspace_name>
+* terraform workspace select <_workspace_name>
 * terraform force-unlock [options] LOCK_ID [DIR]
 * terraform providers
 * terraform providers schema
@@ -324,4 +321,4 @@ Works as a comodin
 * terraform logout
 * terraform destroy
 * terraform destroy --auto-approve
-* terraform destroy -target <_resource_>
+* terraform destroy -target <_resource>
