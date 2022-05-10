@@ -460,7 +460,7 @@ resource "aws_security_groups" "whizlabs" {
 * terraform plan --destroy -out=file
 * terraform plan -refresh-only
 * terraform plan -lock=false
-* terraform graph
+* terraform graph | dot files
 * terraform apply
 * terraform apply --auto-approve
 * terraform apply <_plan_name>
