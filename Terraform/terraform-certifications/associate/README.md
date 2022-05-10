@@ -29,6 +29,7 @@
 * Block Types
   * resources
     * syntax: <_provider> <_resource_type> <_name>
+    * timeouts: Control timers
     * meta-arguments
       * depends_on: handle hidden dependencies (explicit dependency)
       * count: handle multiple resources
@@ -51,7 +52,6 @@
       * lifecycle: [create_before_destroy, prevent_destroy, ignore_changes]
       * provisioner: handle extra actions
         * destroy: if fails will rerun on next apply
-    * timeouts: Control timers
   * data
     * Allow data to be fetched or computed
     * Can have local source
@@ -118,9 +118,9 @@
       * S3 Buckets
       * GCS Buckets
     * Private Module
-      * source: "app.terraform.io/<_organization>/<_module_name>/<_provider>
+      * source: "app.terraform.io/<_organization>/<_module_name>/<_provider>"
     * Registry Module
-      * source: "<_namespace>/<_module_name>/<_provider>
+      * source: "<_namespace>/<_module_name>/<_provider>"
     * Arguments
       * source
       * version
@@ -150,6 +150,9 @@
       module "vpc" {
         source = "git::https://example.com/vpc.git?ref=v1.2.0"
       }
+      module "vpc" {
+        source = "git::https://example.com/vpc.git?ref=myBranch"
+      }
       ```
     * Accesing Outputs: module.<_resource_type><_resource_name>
   * providers
@@ -158,7 +161,7 @@
       provider "aws" {
         region = "us-east-1"
       }
-      # Resources can reference this as `aws.west`
+      # Resources can reference this as `provider = aws.west`
       provider "aws" {
         alias  = "west"
         region = "us-west-2"
@@ -172,8 +175,8 @@
       ```
       terraform {
           backend "local" {
-          path = "relative/path/to/terraform.tfstate"
-        }
+            path = "relative/path/to/terraform.tfstate"
+          }
       }
       ```
 
@@ -202,7 +205,7 @@
   * <= 3.6: Less or equal than 3.6
   * > 3.2, < 3.6: Greater than 3.2 and Less than 3.6
 * Third-Party plugins must be donwloaded manually
-* Plugins must be written in Go
+* Plugins must be written in Go language
 
 ## Default files/folders
 
