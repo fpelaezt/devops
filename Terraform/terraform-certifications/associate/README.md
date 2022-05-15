@@ -296,6 +296,10 @@ If the provisioner failed, the resource is marked as Tainted
 * Allow to handle virtual environments having a set of variables
 * Can be attached to only one repository
 * default workspace can't be deleted
+* Example S3
+  mybucket/dev/dev.tfstate
+  mybucket/stg/dev.tfstate
+  mybucket/prod/dev.tfstate
 
 ## Expressions/Functions
 
