@@ -2,6 +2,7 @@
 
 ## Objectives
 
+* Design Operation Excellence Architectures
 * Design Resilient Architectures
 * Design High Performing Architectures
 * Design Secure Architectures
