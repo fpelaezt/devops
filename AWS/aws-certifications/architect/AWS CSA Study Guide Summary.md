@@ -1,5 +1,14 @@
 # Summary - AWS Certified Solutions Architect Study Guide. Edition 1
 
+## Objectives
+
+* Design Resilient Architectures
+* Design High Performing Architectures
+* Design Secure Architectures
+* Design Cost-Optimized Architectures
+
+## Index
+
 * [Chapter 1 - Cloud Computing Platform](Guide1-Cloud_Computing_Platform.md)
 * [Chapter 2 - S3 and Amazon Glacier](Guide2-S3_and_Amazon_Glacier.md)
 * [Chapter 3 - EC2 and EBS](Guide3-EC2_and_EBS.md)
