@@ -73,9 +73,7 @@
   * Protect against user-level deletion/overwriting
   * Versioning, cross-region replication, MFA Delete
 * Consistency
-  * Read after modifying/deleting an Existing object can bring old data
-  * This happens because it needs to propagate the change
-  * This happens for Initial PUTS requests
+  * Provides strong read-after-write consistency for PUT and DELETE requests
 * Access Control
   * course-grained
     * ACLs
@@ -84,6 +82,7 @@
   * fine-grained
     * IAM policies
     * Bucket policies
+      * Bucket level
       * Recommended option
       * Similar to IAM
   * Query-string authentication
