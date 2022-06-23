@@ -8,19 +8,19 @@
 * For Application you can use AWS Directory Service, For Mobile Application you can use Amazon Cognito
 * AWS Partner Network provides several tools to manage IAM
 * Types of permissions
-* Identity-Based
-* Resource-Based
+ * Identity-Based
+ * Resource-Based
 
 * Principals
   * An entity allowed to interact with AWS resources
   * Types
     * Root User
-      * Default user, Complete Access. Don't use on a regular basics, even for administrative tasks
+      * Default user, Full Access. Don't use on a regular basics, even for administrative tasks
     * IAM Users
       * Individual, system or application. Persist with no expiration
     * Roles/Temporary Security Tokens
       * Actor with specific privileges for a fixed duration of time
-      * Can be authenticated by AWS or External system
+      * Can be authenticated by AWS or External System
       * Provide temporary Token from AWS Security Token Service (STS) API (AssumeRole, AssumeRoleWithWebIdentity, AssumeRoleWithSAML)
       * SAML is used for Single Sign-On
       * Range from 15min - 36hours. Default 12 hours
