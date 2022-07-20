@@ -3,7 +3,6 @@
 ## Amazon Virtual Private Cloud (VPC)
 
 * Networking layer for EC2
-* In a Region a user can have multiple isolated VPC
 * Up to 5 per Region
 * Specify a CIDR from /16 (65k hosts) to /28 (16 hosts)
 * Must specify CIDR and Region at creation
@@ -14,12 +13,14 @@
 * Types of Networking
   * EC2-Classic: flat network shared among AWS customers (available to old AWS accounts)
   * EC2-VPC: AWS accounts have a default VPC in each Region (172.31.0.0/16)
+
 * VPC
   * Contains: Subnets, Route tables, DHCP, security groups, ACLs, DNS Configuration
   * Optional
     * Internet Gateways (IGWs), Elastic IP address (EIP), Elastic Network Interface (ENI)
-    * Endpoints, Peering, Network Address Translation (NAT), Virtual Private Gateway (VPG)
+    * Peering, Network Address Translation (NAT), Virtual Private Gateway (VPG)
     * Customer Gateways (CGWs), Virtual Private Networks (VPN)
+
 * Subnet
   * Smallest /28 (16 hosts)
   * Up to 200 per VPC 
@@ -45,6 +46,7 @@
   * Horizontally scaled, redundant, high available component
   * Performs NAT
   * Must be attached to the VPC, create a default route 0.0.0.0/0 to the IGW and configure ACLs and Security Groups
+  * Provides internet access to EC2 with public ip
 
 * DHCP
   * Provides IP and parameters such as domain name, domain name server, netbios-node-type
@@ -89,6 +91,9 @@
     * Service: com.amazonaws.region.service
     * Policy
     * Route Tables
+  * Gateway Endpoints (Useful for S3 and DynamoDB)
+  * Interface Enpoints (Useful for rest of the services)
+
 * Peering
   * Network connection between two VPCs in the same Region as if all instances were in the same network
   * Created with Request/Accept (one week before expires)
@@ -122,7 +127,7 @@
   * For most cases use NAT Gateways instead of NAT Instances. Availability, bandwidth and easy configuration effort reasons
   * Performs NAT/PAT
   * Allow access internet without an EIP
-  * NAT Instances:
+  * NAT Instances
     * Amazon Linux Machine
     * String name amzn-ami-vpc-nat
     * To use the following must be done
@@ -132,6 +137,7 @@
       * Configure a Route Table with the private subnet to direct Internet-bound traffic to the NAT
       * Allocate an EIP and associated with the NAT
   * NAT Gateway
+    * Provides internet access to EC2 with non-public ip 
     * Amazon managed resource
     * Disable Source/Destination checks
     * To use the following must be done
@@ -165,3 +171,8 @@
   * ENI remains attached for EC2-VPC
   * Encryption is not free
   * VPC Flow Logs allows to capture info aboyt IP traffic
+  * AWS Direct Connect (DX)
+    * Up to 100 Gbps
+    * Hybrid cloud architectures
+    * Security and Compliance
+  * Transit Gateway: Connects multiple VPC, VPN Connector, Connect to Direct Connect
