@@ -25,7 +25,7 @@
       * SAML is used for Single Sign-On
       * Range from 15min - 36hours. Default 12 hours
   * Up to 500 by default
-  * Use for:
+  * Use for
     * Amazon EC2 Roles
       * Permission to applications running on a EC2 instance
       * When the application use the API of the requested resource, automatically ask for a Token

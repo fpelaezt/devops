@@ -122,9 +122,13 @@
     * Free to restore 5% per month of the total size of Amazon Glacier
     * Cost per restore beyond 5% of total size per month
     * Best practice is to set a policy to restrict restores and avoid paying
-  * Glacier Deep Archive
-    * Default retrieval time 12 hours
-    * Minimum duration charge 180 days
+    * Types
+      * Glacier Instant Retrieval
+      * Glacier Flexible Retrieval
+        * Retrieval from 5min to 12 hours
+      * Glacier Deep Archive
+        * Default retrieval time 12 hours to 48 hours
+        * Minimum duration charge 180 days
 * Object Lifecycle Management
   * Requires enable versioning*
   * Allows to configure a policy of how data is managed
@@ -225,7 +229,7 @@
  * Governance
    * Only special users can modify/delete objects
  * Compliance
-   * Any user can´t modify/delete during retention period
+   * Any user can't modify/delete during retention period
    * Legal Hold protects the object version even after a retention period
 
 ### Amazon Glacier
@@ -256,4 +260,3 @@
     * Data transfer out (GB/month)
     * Request (thousands UPLOAD-RETRIEVAL/month)
     * Prorated charged (per GB) for items deleted prior to 90 days
-  
