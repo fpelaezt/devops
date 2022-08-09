@@ -8,12 +8,15 @@
   * Columns must be defined prior to add data
   * Require a VPC with a subnet in at least two AZ
   * Supports: MySQL, Oracle, PostgreSQL, Microsoft SQL Server, MariaDB, Amazon Aurora
-  * Types
-    * Online Transaction Processing (OLTP): Transaction, change data frequently
-    * Online Analytical Processing (OLAP)
-      * Data warehouses, read data optimized, complex querys
-      * Updated on Batch Schedule
-      * Can be used in Amazon RDS or Amazon Redshift
+
+* Types
+  * Online Transaction Processing (OLTP)
+    * Transaction in real time
+    * Change data frequently
+  * Online Analytical Processing (OLAP)
+    * Data warehouses, read data optimized, complex querys
+    * Updated on Batch Schedule
+    * Amazon Redshift
 
 * NoSQL
   * Improve perfomance
@@ -51,21 +54,29 @@
     * InnoDB storage engine
     * MyISAM engine doesn't support reliable crash recovery
   * PostgreSQL
-  * MariaDB: XtraDB storage engine. Enterprise version MySQL
-  * Oracle: Standard One, Standard, Enterprise
+  * MariaDB
+    * XtraDB storage engine. Enterprise version MySQL
+  * Oracle
+    * Standard One, Standard, Enterprise
   * Microsoft SQL Server
     * Versions: SQL Server 2008 R2, SQL Server 2012, SQL Server 2014
     * Editions: Express (No Multi-AZ), Web (No Multi-AZ), Standard, Enterprise
   * Amazon Aurora
-    * Based on MySQL (5 times better perfomance)
-    * 2 times better performance than Postgress
+    * Based on MySQL (5x > MySQL, 3x > PostgreSQL)
+    * Size of chunks of 10GB to 128TB
+    * Up to 96 vCPUs and 768GB RAM
     * Up to 50k reads/100k writes per second
-    * Cost 1/10 of commercial DBs
-    * 2-32vCPU, 4-244GiB, 10GB-64TB
+    * 2 copies on each AZ, minimum 6 AZ. Total of 6 copies. Can lose 2
+    * Storage is self-healing. Data blocks and disk are repaired automatically
     * 99.99% availability
-    * DB cluster
-      * Primary Instance: Read/Write
-      * Replica: Read Only. Up to 15 replicas in three different AZ
+    * Replica
+      * Up to 15 Aurora replicas (in three different AZ)
+      * Up to 5 MySQL or PostgreSQL replicas
+    * Backups
+      * Doesn't affect performance
+      * Snapshots doesn't affect performance
+    * Aurora Serverless
+      * BD cluster automatically scales up/down based on application
 * Storage Options
   * Built on EBS (Magnetic, General Purpose SSD, Provisioned IOPS SSD. From 5GB to 6TB. 30k IOPS
 * Backup
@@ -90,7 +101,8 @@
   * For MySQL avoid tables beyond 6TB
 * High Availability
   * Master-Slave Synchronous replication
-  * Use for disaster recovery only. Read are not allows on Slave Instance
+  * Use for disaster recovery only (Increase availability)
+  * Read are not allows on Slave Instance
   * Use an endpoint CNAME
   * Detects automatically: loss availability, connectivity, compute/storage failure, instance type changes
   * Support manual failover. Takes around two minutes
@@ -107,9 +119,12 @@
       * Partitioning into multiple instances or shards
       * Requires logic in the application
     * Read Replicas
+      * Increase scalability
       * Handle read traffic separated
-      * Support for MySQL, PostgreSQL, MariaDB, Amazon Aurora
       * Cross-Region replicas is supported
+      * Each read replica has its own DNS endpoint
+      * Automatic Backups is mandatory
+      * Can be promoted to a DB itself (breaks replication)
 
 ### Amazon RedShift
 
@@ -154,11 +169,11 @@
 ### Amazon DynamoDB
 
 * Fully NoSQL
+* Use High performance SSD storage
+* Synchronously replicates data across 3 facilities
 * Distribute traffic and tables over multiple partitions
 * After setting capacity, scaling out/in is done automatically
-* Use High perfomance SSD storage
 * Provide High availability/durability by replication data in AZ (default)
-* Synchronously replicates data across 3 facilities
 * Advantages of Cross-Region Replication
   * Disaster Recovery
   * Faster reads
@@ -241,12 +256,35 @@
   * For Mobile combine Web Identity Federation with AWS STS
   * FGAC (Fine Grained Access Control) & Per-Client Embedded Token: item level access control
   * SSE not supported. To encrypt before storing must used a Client side library or a AWS KMS
+  * Encryption at rest using KMS
+  * Site-to-Site VPN connection
+  * Direct Connect (DX)
+  * Integrate with CloudWatch / CloudTrail
+  * Support VPC endpoints connections
 * Streams
   * Allows get a list of item modifications for the las 24-hours
   * Buffered in a time-ordered sequence or stream. An application can read this stream
   * This feature can be disable/enable
-  * Streams ar organized into groups or shards
-  * Recommendation is to use Amazon DynamoDB Kinesis Adapter
+  * Streams are organized into groups or shards
+  * Recommendation is to use Amazon DynamoDB Kinesis 
+  * Can be combined with Lambda to simulate procedures
+* Global Tables
+  * Multi-Master, Multi-Region
+  * Based on DynamoDB Streams
+  * Allows multi-region redundancy for DR
+  * Replication latency under 1 second
+* Transactions
+  * Requires DynamoDB Transactions to provide ACID (Atomic Consistent Isolated Durable)
+  * All or Nothing
+  * Use Cases: Financial transactions
+  * Reads
+    * Eventual Conistency
+    * Strong Consistency
+    * Transactional
+  * Writes
+    * Standard
+    * Transactional
+  * Up to 25 items or 4MB data per transaction
 * Operations
   * Query
     * Limit scan request result to 1MB, scan for next 1MB
@@ -254,3 +292,15 @@
   * scan
     * Retrieve all table
     * Reads every item in a table or a secondary index
+* DAX
+  * DynamoDB Accelerator
+  * Fully managed in-memory cache
+  * 10x performance improvements
+  * Pay-per-request pricing
+* Backups
+  * Full backups at any time with zere impact
+  * Operates in the same region
+  * PITR (Point-In-Time Recovery)
+    * Any time in the last 35 days
+  * Not enabled by default
+  * Last restorable time in 5 min in the past
