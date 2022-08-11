@@ -10,12 +10,18 @@
 * Instance tenancy attribute will apply to all instances in the VPC
 * At creation: default CIDR /16, default subnet in every AZ, default SG and NACL, default route table to IGW
 * Wizard options: Single public, two private/public, two private/public and hardware VPN access
+* Default VPC
+  * Contains a public subnet in every Availability Zones in the Region
+  * Subnet Netmask /20
+  * Each EC2 has public and internet address
 * Types of Networking
   * EC2-Classic: flat network shared among AWS customers (available to old AWS accounts)
   * EC2-VPC: AWS accounts have a default VPC in each Region (172.31.0.0/16)
 
 * VPC
   * Contains: Subnets, Route tables, DHCP, security groups, ACLs, DNS Configuration
+  * New VPC
+    * 1 Main Route Tables, 1 Security Group, 1 Main Network ACL
   * Optional
     * Internet Gateways (IGWs), Elastic IP address (EIP), Elastic Network Interface (ENI)
     * Peering, Network Address Translation (NAT), Virtual Private Gateway (VPG)
@@ -23,7 +29,7 @@
 
 * Subnet
   * Smallest /28 (16 hosts)
-  * Up to 200 per VPC 
+  * Up to 200 per VPC
   * 5 IP reserved by AWS: first 4 and last IP
   * Reside inside one Availability Zone
   * Split in multiple subnets for High Availability
@@ -32,7 +38,6 @@
     * Public: directs traffic to IGW
     * Private: not directs traffic to IGW
     * VPN: directs traffic to VPG, and doesn't have a route to an IGW
-  * Default VPCs contains a public subnet in every Availability Zones in the Region. Netmask /20
   * Subnets can communicate with each other by default*
 
 * Route Tables
@@ -84,17 +89,19 @@
     * Warm = Stopped Instance
     * Cold = Launching Instance
 
-* Endpoints
+* VPC Endpoints
   * Enable private connection from VPC to others AWS Services (Amazon S3)
+  * Virtual devices
   * In order to use you must specify
     * Amazon VPC
     * Service: com.amazonaws.region.service
     * Policy
     * Route Tables
-  * Gateway Endpoints (Useful for S3 and DynamoDB)
-  * Interface Enpoints (Useful for rest of the services)
+  * Types
+    * Gateway Endpoints (Useful for S3 and DynamoDB)
+    * Interface Enpoints (Useful for rest of the services)
 
-* Peering
+* VPC Peering
   * Network connection between two VPCs in the same Region as if all instances were in the same network
   * Created with Request/Accept (one week before expires)
   * one-to-one relationships between two VPCs
@@ -103,25 +110,31 @@
   * Do not support internet or corporate access through peering
 
 * Security Groups
+  * Stateful firewall on a instance level
   * Default: allow traffic between all resources in the security group, allow outbound traffic, deny all other traffic
   * 4 components: Traffic direction, port, protocol, destination/source address
   * Add rules to Incoming and another group of rules for Outgoing
   * Up to 500 per VPC
   * Up to 50 inbound rules and 50 outbound rules per security group
-  * Only allow rules are possible. Stateful
+  * Only allow rules are possible
   * Instances can't talk to other instances in the same Security Group (except the default)
 
 * Network Access Control Lists
-  * Stateless firewall on a subnet level. Created by default
-  * Numbered list of rules evaluated in order (starting for the lowest)
+  * Stateless firewall on a subnet level
+  * Created by default
+  * Can Allow/Deny traffic
+  * Numbered list of rules evaluated in order (starting with the lowest)
   * Default allow all inbound/outbound traffic
   * If create a new all traffic is deny
-  * Different between ACLs and Security Groups
-    * SG: operates at instance level, ACL: operates at subnet level
-    * SG: first level of defense, ACL: second level of defense
-    * SG: allow rules only, ACL: allow/deny rules
-    * SG: Stateful, ACL: Stateless
-    * SG: All rules are evaluated before deciding, ACL: process rules in order
+  * One NACL can be associated with multiple Subnets
+  * One Subnet can only be associated with One NACL
+
+* SG vs NACL
+  * SG: operates at instance level, ACL: operates at subnet level
+  * SG: first level of defense, ACL: second level of defense
+  * SG: allow rules only, ACL: allow/deny rules
+  * SG: Stateful, ACL: Stateless
+  * SG: All rules are evaluated before deciding, ACL: process rules in order
 
 * Network Address Translation NAT (Instances and Gateways)
   * For most cases use NAT Gateways instead of NAT Instances. Availability, bandwidth and easy configuration effort reasons
@@ -139,12 +152,14 @@
   * NAT Gateway
     * Provides internet access to EC2 with non-public ip 
     * Amazon managed resource
+    * Redundant inside a AZ
+    * To create an independent Availability Zone, create a NAT gateway in each and configure
     * Disable Source/Destination checks
+    * Throughput 5Gbps/45Gpbs
+    * Automatically assigned to a Public IP
     * To use the following must be done
       * Configure a Route Table with the private subnet to direct Internet-bound traffic to the NAT
       * Allocate an EIP and associated with the NAT
-  * Best practice
-    * To create an independent Availability Zone, create a NAT gateway in each and configure
 
 * Virtual Private Gateways (VPGs) / Customer Gateways (CGWs) / Virtual Private Networks (VPNs)
   * VPGs/CGWs allows connections of a corporate network to the VPC
@@ -164,6 +179,30 @@
   * Removing a subnet can cause unavailability
   * It's not allowed to change a subnet group when a DB instance is deployed
 
+* VPC PrivateLink
+  * Expose service VPC to multiple VPC's
+  * Doesn't require VPC Peering, NAT GW, IGW, etc
+  * Requires NLB on the service VPC and ENI on the customer VPC
+
+* VPN CloudHub
+  * hub-and-spoke model to connect multiple sites
+  * Operates over internet
+
+* AWS Direct Connect (DX)
+  * Private connection to between AWS and on-premise
+  * Up to 100 Gbps
+  * Hybrid cloud architectures
+  * Security and Compliance
+  * Types
+    * Dedicated Connection: Physical Ethernet connection through AWS
+    * Hosted Connection: Phycal Ehernet connection through a Partner
+
+* Transit Gateway
+  * Connects multiple VPC, VPN Connector, Direct Connect using a central hub
+  * hub-and-spoke model
+  * Can connect multi AWS accounts using RAM (Resource Access Manager)
+  * Support IP Multicast
+
 * Notes
   * An "EBS-backed" instance uses an EBS volume as its root device
   * Can be stopped
@@ -171,8 +210,3 @@
   * ENI remains attached for EC2-VPC
   * Encryption is not free
   * VPC Flow Logs allows to capture info aboyt IP traffic
-  * AWS Direct Connect (DX)
-    * Up to 100 Gbps
-    * Hybrid cloud architectures
-    * Security and Compliance
-  * Transit Gateway: Connects multiple VPC, VPN Connector, Connect to Direct Connect

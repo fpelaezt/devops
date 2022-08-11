@@ -52,8 +52,8 @@
     * Use for Amazon VPC
     * Support multiple VPCs and different AWS accounts
   * Public: Use for Internet
-  * CNAMES is not allowed in the domain apex
-  * Alias (A Record) similar to a CNAME but it's a pointer to:
+  * CNAMES is not allowed in the domain apex (naked)
+  * Alias (A Record) similar to a CNAME but it's a pointer to
     * CloudFront Distribution, Beanstalk environment, static content S3, and other resources in the zone (like ELB)
     * Alias can be used to point to Apex for all previous options
     * Fixed TTL of 60 sec
@@ -64,11 +64,25 @@
 * Supported Records
   * A, AAAA, CNAME, MX, NS, PTR, SOA, SPF, SRV, TXT, Routing Policies
 * Routing policies: Can be associated with health checks
-  * Simple: Default
-  * Weighted: Allows load balancing (WRR) [0-255]
+  * Simple
+    * Default
+    * One record with multiple IP Addresses
+    * Random order
+  * Weighted
+    * Allows load balancing (WRR) [0-255]
+    * Higher weight has proirity
   * Latency-Based (LRB)
-  * Failover: Only for public hosted zones
-  * Geolocation: By continent, By country or By states in US. Best practice is to configure a default or global record (GeoDNS)
+  * Failover
+    * Useful for DR scenarios
+    * Only for public hosted zones
+  * Geolocation
+    * By continent, By country or By states in US
+    * Best practice is to configure a default or global record (GeoDNS)
+  * GeoProximity
+    * Traffic Flow is required (geo location, latency, availability)
+    * Bias is a way to route more/less traffic for an area that expand/shrink
+  * Multivalue Answer
+    * Similar to Simple but allows to put health checks on each record
 * Health Checking
   * Run periodically, result are published to all DNS servers
   * After 3 failed in a row a resource is marked as unavailable
@@ -79,6 +93,7 @@
   * Enable String Matching allow checking web page content
   * S3 service is checked, not the specific bucket
   * Can use Cloud Watch metrics
+  * Can use SNS notifications to alert about failed health checks
 * Resiliency
   * Every AWS Region, with a Elastic Load Balancer with cross-zone and connection draining enabled
   * ELB health check requires "Evaluate Target Health"=true
