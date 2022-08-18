@@ -1,5 +1,3 @@
-# CHAPTER 10
-
 ## Amazon ElastiCache
 
 * Caching environment ready to use. Only need to change endpoint of applications

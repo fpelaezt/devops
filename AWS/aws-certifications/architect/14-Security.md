@@ -1,5 +1,3 @@
-# CHAPTER 12
-
 ## Security on AWS
 
 * Shared Responsability Model
@@ -23,7 +21,7 @@
   * Incident Response: 24x7x365
   * Communication
 
-### Network security
+## Network security
 
 * Secure Network Architecture: Rules sets, ACLs
 * Secure Access Points: Limited and redundant connection
@@ -33,19 +31,22 @@
 * AWS GovCloud: Isolated Region to meet regulatory requirements for US goverment
 * Network Monitoring and Protection
   * DDoS (Distributed Denial of Service) Attacks
+    * SYN flood
   * MITM (Man In The Middle) Attacks
   * IP Spoofing
   * Port Scanning: Be careful, violates AWS Acceptable Use Policy
   * Packet sniffing by Other Tenants: best practice is encrypt sensitive data
   * ARP Cache poisoning not allowed
+  * Amplification Attack: request using spoofed IP address, replies goes back to the victim's IP
+  * Layer 7 Attack: Flood of GET/POST request
 
-### AWS Access
+## AWS Access
 
 * Account review and background checks of Amazon employees
 * New developments are tested
 * Change management: software
 
-### AWS Account Security
+## AWS Account Security
 
 * AWS Security Credentials
   * Passwords: AWS root account, IAM users. /[a-ZA-Z0-9]{6-128}/. Allow password policy definition
@@ -56,10 +57,168 @@
   * Signature Version 4
     * Calculation process (provides message integrity and replay attack prevention)
     * Provides identity of requestor, protect data in transit, protect against replay attacks
-* AWS CloudTrail
-  * Support file integrity
 
-### AWS Cloud Service-Specific Security
+
+## AWS CloudTrail
+
+* Record API calls: API, identity of caller, source ip, time, parameters, response elements
+* Deliver log files to an Amazon S3 bucket
+* Optionally can deliver logs to a a group monitor by Amazon CloudWatch Logs
+* A notification using SNS can sent every time a log file is sent to bucket
+* Tipically delivered within 15 minutes
+* Types
+  * Trail to all regions (best practice)
+    * One SNS topic and one CloudWatch group
+  * Trail to one region
+* Logs are encrypted by default using SSE
+* Logs can use a LifeCycle policy
+* Logs are sent around 15 minutes after API call
+
+## Amazon Shield
+
+* Free DDoS protection
+* Protects ELB, CloudFront, Route53
+* Protects against SYN/UPD floods, reflection attacks, Layer3/4
+
+## Amazon Shield Advance
+
+* Enhanced protections ELB, CloudFront, Route53 (service / bill)
+* Near Real-Time notification of DDoS attacks
+* Access to 24/7 DDoS Response Team (DRT)
+* $3k USD per Month
+
+## Amazon WAF
+
+* Web Application Firewall
+* Monitor HTTP/HTTPS for CloudFront and ELB
+* Controls: Source IPs, query string parameters
+* Operates at layer 7
+* Decision: Allow or give 403
+* Behaviours
+  * Allow all except
+  * Block all except
+  * Count request
+* Conditions
+  * Ip address
+  * Country
+  * Values in the request headers
+  * Presence of SQL code (SQL injection)
+  * Presence of script (cross-site scripting)
+  * string in requests (regex)
+
+## Amazon GuardDuty
+
+* Threat detection service with ML
+* Prevents
+  * Unusual API calls
+  * API calls from malicious IP
+  * Attempts to disable CloudTrail
+  * Unauthorize deployments
+  * Compromised instances
+  * Port scanning
+  * Failed logins
+* Integrates with GuardDuty console and CloudWatch Events
+* Receives information for third-party security sites
+* Monitors CloudTrail logs, VPC Flow logs, DNS Logs
+* Price: Depends on CloudTrail logs size and VPC flows
+
+## Amazon Macie
+
+* Automated Data Analysis of Sensitive data on S3
+* Look for PII (Personal Identifiable Information), PHI, Financial data
+* Alerts for unencrypted/public/shared buckets
+* Great for frameworks like HIPAA/GDPR
+* Alerts can be sent to EventBridge
+* Can be integrated with AWS Security Hub
+
+## Amazon Inspector
+
+* Automated security inspector for applications (EC2 / Network)
+* Assessment Finding
+  * Network assessments (agent is not required)
+  * Host assessments (agent is required)
+
+## AWS Key Management Service (KMS / CloudHSM)
+
+* Generation, exchange, storage, use and replacement of keys
+* To use KMS a CMK is created
+  * Create options
+    * Using AWS managed HMS
+    * Import Key from customer and associate it with a CMK
+    * Have the Key Material and use in AWS CloudHSM cluster (feature of KMS)
+* KMS
+  * Symmetric: same key to encrypt/decrypt
+  * Customer Manage Keys: Use a type of key called Customer Masker Key (CMK) - Fundamental resource
+    * It is use to encrypt/decrypt up to 4KB of data
+    * Also use to encrypt data keys
+    * Never leave AWS KMS unencrypted
+  * Data keys
+    * It is used to encrypt large data objects
+    * After using GenerateDataKey a plaintext and ciphertext
+  * Envelope Encryption: Method
+  * Encryption Context: optional key/value
+    * To decrypt the same Encryption Context must be provided
+  * Automatic Key rotation is supported
+* Process
+  * Creates data key
+  * Encrypt under CMK
+  * Returns: Plaintext and encryted versions
+  * Use plaintext key to encrypt data + store encrypted key
+  * Can retrieve plaintext data key only when having encrypted data key + permission to use the master key
+* Not related with temporary Security Tokens
+* HSM (Hardware Security Module)
+* All KMS CMKs have a key policy
+* Ways to control permissions
+  * Use a Key Policy
+  * Use IAM Policy in combination with Key Policy
+  * User gratns in combintation with the Key Policy
+* CloudHSM
+  * Cloud-based HSM that allows to generate encryption keys
+  * It's a physical dedicated device
+  * Automatic key rotation not supported
+
+## AWS Secrets Manager
+
+* Service to store, encrypts and rotate credentials
+* Stores
+  * RDS crendentials
+  * Any Key Value pair (API / SSH Keys)
+* When rotation is enabled, the rotation is executed once at that moment. Don't do it if credentials are hard-coded
+
+## AWS Parametes Store
+
+* Hierarchical storage of configuration data and secrets
+* It's Free
+* Limit of 10k
+* No key rotation
+
+## Pre-Signed URL / Cookies
+
+* Pre-Signed URL: Share an S3 object for an specific time. Default 1 hour
+* Pre-Signed Cookies: Useful to give access to multiple restricted files
+
+## Advance IAM Policy Document
+
+* arn
+  * arn:partition:service:region:account_id:suffix
+  * Suffix
+    * resource
+    * resource_type/resource
+    * resource_type:resource
+    * resource_type/resource/qualifier
+    * resource_type/resource:qualifier
+    * resource_type:resource:qualifier
+* Permission Boundaries
+  * Used to delegate administration tasks to other users
+
+## AWS Certificate Manager
+
+* Allows create, manage and deploy private SSL certificates
+* Integrates with ELB, CloudFront, API Gateway
+* It's Free
+* Handles renewal
+
+## AWS Cloud Service-Specific Security
 
 * Compute Services
   * EC2: IaaS, host OS, guess OS, firewall, signed API calls.
@@ -142,7 +301,7 @@
   * ElastiCache
     * In-Memory cache environment
 
-### Application Services
+## Application Services
 
 * Amazon CloudSearch
   * Search in webpages, document files, forum posts or product information

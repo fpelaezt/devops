@@ -1,5 +1,3 @@
-# CHAPTER 9
-
 ## Domain Name System (DNS) and Amazon Route 53
 
 * www.amazon.com

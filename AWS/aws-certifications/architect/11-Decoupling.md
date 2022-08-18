@@ -1,5 +1,3 @@
-# CHAPTER 8
-
 ## Amazon Simple Queue Service (SQS)
 
 * Buffer between receivers and processers
@@ -13,6 +11,7 @@
   * FIFO Queues
   * FIFO is not guarantee in an standard Queue, a FIFO queue must be used
   * FIFO queue doesn't allow duplicate message in a 5-min deduplication interval
+  * FIFO has an extra charge
   * Throughput of 300 transactions per Second (TPS)
   * Not available in every region
 * If order is important, a sequence must be inserted in the data
@@ -34,7 +33,9 @@
   * Body: name/value pairs. Unstructured/Uninterpreted content
   * Up to 120k messages "in flight"
   * A message is "in flight", when is neither delay nor visibility timeout
+  * Encryption at rest not enabled by default
 * Message Retention
+  * Minumum: 1 minute
   * Default: 4 days*
   * Maximun: 14 days
 * Throughput
@@ -51,6 +52,9 @@
   * Client can set a WaitTimeSeconds in ReceiveMessage to wait X seconds for a new message
   * This avoid constantly checking the queue.
   * From 1 up to 20 seconds
+  * Not enable by default
+* Queue Depth
+  * Can trigger autoscaling
 * DeadLettersQueue
   * Queue used by other queues to send unsucessfully processed messages
 * Access Control
@@ -101,10 +105,16 @@
 ## Amazon Simple Notification Service (SNS)
 
 * Push notification of Mobile and Enterprise messages
-* Types of endpoint: Email, Email-JSON, SMS, SQS, HTTP/S, AWS Lambda
+* Types of endpoint: Email, Email-JSON, SMS, SQS, HTTP/S, AWS Lambda, Kinesis Data Firehose
+* Maximum message size: 256KB
 * Publish-Subscribe (pub-sub). Producers-Consumers
 * Asynchronous communication from producers sendig a message to a topic
 * If a message was sent can't be recalled
+* DLQ Support for messages that fail to be delivered, except HTTP(S)
+* Retries is support only for HTTP(S)
+* Encryption in transit by default
+* Encryption in at-rest is optional
+* Support resource (topic) policies
 * Topic
   * Logical access point/communication channel
   * Contain list of subscribers and methods
@@ -121,3 +131,18 @@
   * Application and System Alert: SMS/Email notifications
   * Push Email and Text Messaging: (eg:. news headlines)
   * Mobile Push Notifications: (eg:. available updates)
+
+## AWS API Gateway
+
+* Fully managed for publishing API
+* Can be protected by WAF
+* Stop Abuse (prevent DDoS attacks and set client limits)
+* Uses cloudfront to improve response time
+* Act as a AWS Service proxy
+* Stages: Similar to tags / variables
+* CORS: Cross Origin Resource Sharing
+* Swagger: Import
+* API Caching: Reduce latency (Not in the free tier)
+* Throttling limit request, if exceeded generates error 429 (too many requests)
+* /ping /sping reserved paths for health checks
+* Create --> Deploy

@@ -1,5 +1,3 @@
-# CHAPTER 6
-
 ## AWS Identity and Access Management (IAM)
 
 * Uses users, groups and access control list to control permissions

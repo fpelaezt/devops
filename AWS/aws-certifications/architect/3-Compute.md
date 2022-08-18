@@ -1,7 +1,3 @@
-# CHAPTER 3
-
-## Amazon Elastic Compute Cloud (Amazon EC2) and Amazon Elastic Block Store (Amazon EBS)
-
 ## Amazon Elastic Compute Cloud EC2
 
 * Adquire compute power using Virtual machines called Instances

@@ -1,5 +1,3 @@
-# CHAPTER 4
-
 ## Amazon Virtual Private Cloud (VPC)
 
 * Networking layer for EC2

@@ -1,5 +1,3 @@
-# CHAPTER 7
-
 ## Databases and AWS
 
 * Relational Databases
@@ -125,46 +123,6 @@
       * Each read replica has its own DNS endpoint
       * Automatic Backups is mandatory
       * Can be promoted to a DB itself (breaks replication)
-
-### Amazon RedShift
-
-* SQL Data warehouse for OLAP
-* Based on PostgreSQL
-* Support Automated/Manual snapshots
-* To $0.25 per hour to $1000 per TB per year
-* Block size 1024KB for reducing I/O
-* Cluster
-  * Leader Node + (1 or more) Compute Nodes
-  * Client interacts with Leader via JDBC/ODBC
-  * Support six node types (compute/memory/storage)
-    * Dense compute: Up to 326TB with SSD
-    * Dense Storage: Up to 2PB
-  * Each cluster contains 1 or more databases
-  * User data for each table is distributed across the Compute Nodes
-  * Disk Storage of Cumpute Nodes is divided into Slices (from 2 to 16)
-  * Compute Nodes participate in parallel query execution
-* Support resize (storage/compute). When resize is activated, a new cluster with a copy is created to migrate data. Meanwhile read-only is activated.
-* Table Design
-  * CREATE TABLE: Support compression encoding, distribution strategy and sort keys
-  * Existing columns can't be modified
-  * Compression Encoding: Automatically by AWS or set manually by column
-  * Distribution Strategy
-    * Huge impact: query performance, storage requirements, data loading, maintenance
-    * Types
-      * EVEN: Default. Uniform distribution across slices
-      * KEY DISTRIBUTION: According to the values of column. Matching values are store together
-      * ALL DISTRIBUTION: Full copy of entire table to every node. Use for large tables with fewer updates
-  * Sort Keys
-    * Compound: Use when query predicates a prefix
-    * Interleaved: Equal weight to each column in the sort key
-* Loadind Data
-  * Standard INSERT/UPDATE or COPY for bulks
-  * Faster way is to bulk load from an Amazon S3 bucket
-  * Parallel load
-  * After a large amount, a VACUUM to reorganize and ANALYZE to update statistics should be done
-* Quering
-  * For large clusters configure Workload Management (WLM) to queue an prioritize queries.
-  * WLM defines Queues and Concurrency
 
 ### Amazon DynamoDB
 
@@ -304,3 +262,13 @@
     * Any time in the last 35 days
   * Not enabled by default
   * Last restorable time in 5 min in the past
+* Scaling
+  * Provisioned
+    * Predictable workload
+    * Set upper and lower scaling limits
+    * Cost-Effective model
+    * Can switch from pricing model every 24 hours
+  * On-Demand
+    * Sporadic workload
+    * Pay money per read/write
+    * Less cost-effective

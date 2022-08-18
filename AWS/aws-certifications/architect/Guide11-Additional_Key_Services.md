@@ -1,10 +1,5 @@
-# CHAPTER 11
 
-## Additional Key Services
-
-### Storage and Content Delivery
-
-#### Amazon CloudFront
+## Amazon CloudFront
 
 * Global CDN. Less latency
 * Use DNS geo-location to determine edge location
@@ -50,7 +45,7 @@
   * Regional Data Transfer Out of Origen (for external origins)
   * Optional commitment payment to get a significant discount
 
-#### AWS Storage Gateway
+## AWS Storage Gateway
 
 * On-Premise appliance storage
 * Stored encrypted by default
@@ -111,29 +106,6 @@
     * Proxy service to connect cloud with on-premise Microsoft AD
     * Users can access Cloud services with their own company credentials
 
-#### AWS Key Management Service (KMS)
-
-* Generation, exchange, storage, use and replacement of keys
-* KMS
-  * Symmetric: same key to encrypt/decrypt
-  * Customer Manage Keys: Use a type of key called Customer Masker Key (CMK) - Fundamental resource
-    * It is use to encrypt/decrypt up to 4KB of data
-    * Also use to encrypt data keys
-    * Never leave AWS KMS unencrypted
-  * Data keys
-    * It is used to encrypt large data objects
-    * After using GenerateDataKey a plaintext and ciphertext
-  * Envelope Encryption: Method
-  * Encryption Context: optional key/value
-    * To decrypt the same Encryption Context must be provided
-* Process
-  * Creates data key
-  * Encrypt under CMK
-  * Returns: Plaintext and encryted versions
-  * Use plaintext key to encrypt data + store encrypted key
-  * Can retrieve plaintext data key only when having encrypted data key + permission to use the master key
-* Not related with temporary Security Tokens
-
 #### AWS CloudHSM
 
 * Hardware appliances
@@ -141,66 +113,7 @@
 * Best practice is to use two HSM's in high availability
 * Create/Control both symmetric and asymmetric keys (public/private)
 
-#### AWS CloudTrail
-
-* Record API calls: API, identity of caller, time, parameters, response elements
-* Deliver log files to an Amazon S3 bucket
-* Optionally can deliver logs to a a group monitor by Amazon CloudWatch Logs
-* A notification using SNS can sent every time a log file is sent to bucket
-* Tipically deliver within 15 minutes
-* Types
-  * Trail to all regions (best practice)
-    * One SNS topic and one CloudWatch group
-  * Trail to one region
-* Logs are encrypted by default using SSE
-* Logs can use a LifeCycle policy
-* Logs are sent around 15 minutes after API call
-
 ### Analytics
-
-#### Amazon Kinesis
-
-* Load and analyze streaming data
-* Stream in composed of one or more shards
-* Up to 1000 PUT record per second per shard
-* Up to 1MB size message
-* Amazon Kinesis Firehose
-  * Load
-  * Store options
-    * S3
-    * Redshift (initially store and S3 and then COPY)
-    * ElasticSearch (optional a backup to S3 is available)
-* Amazon Kinesis Strems
-  * Analyze real-time
-  * Can use multiple shards
-  * Use Kinesis Client Library (KCL) to build real-time dashboards, generates alerts, etc.
-  * Store record for 24 hours by default, up to 168 (7 days)
-  * A "Consumer" get data from kinesis streams
-* Amazon Kinesis Analytics
-  * Analyze using standard SQL
-
-#### Amazon Elastic MapReduce (EMR)
-
-* Hadoop framework
-* Cluster initialization requieres: Instance Type, Number of nodes, Hadoop version, additional tools (Hive, Pig, Spark, Presto)
-* Useful for analyze data already store in AWS
-* Allow SSH root level access
-* Storage Type
-  * HDFS (Hadoop Distributed File System) - Transient cluster
-    * default
-    * Data is replicated among multiple instances
-    * Amazon Instance (lost data after shut down) or Amazon EBS for HDBS (persist data after shut down)
-    * Best for 24x7 cluster
-  * EMRFS (EMR File System) - Persistent cluster
-    * Store data in S3
-    * Data persits after shut down
-    * Best for transient cluster
-* Increase Perfomance
-  * Split size, increase number of mapper tasks
-* Use cases
-  * Log Processing
-  * Clickstream Analysis: segment users and understand preferences
-  * Genomics and Life Science
 
 #### AWS Data Pipeline
 
@@ -378,15 +291,3 @@
 #### AWS CodePipeline (Cotinuous integration and delivery, build, test, deploy)
 
 #### AWS X-Ray (Analyze and debug, help troubleshooting)
-
-#### AWS API Gateway
-
-* Uses cloudfront to improve response time
-* Act as a AWS Service proxy
-* Stages: Similar to tags / variables
-* CORS: Cross Origin Resource Sharing
-* Swagger: Import
-* API Caching: Reduce latency (Not in the free tier)
-* Throttling limit request, if exceeded generates error 429 (too many requests)
-* /ping /sping reserved paths for health checks
-* Create --> Deploy

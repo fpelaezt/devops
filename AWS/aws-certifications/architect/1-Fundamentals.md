@@ -1,5 +1,3 @@
-# CHAPTER 1
-
 ## AWS Cloud Computing Platform
 
 * Premium Support: Bacic (6 Trusted Advisor), Developer (6 TA), Business (Full TA), Enterprise (Full TA)
