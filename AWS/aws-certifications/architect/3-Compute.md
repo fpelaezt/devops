@@ -18,6 +18,10 @@
   * g[2]                            : GPU-based (graphics)
 * Networking
   * ENI (Elastic Network Interface)
+    * Attachements types
+      * Hot: Instance Running
+      * Warm: Instance Stopped
+      * Cold: Instance Launched
   * EN (Enhance Network)
     * SR-IOV: Single root I/O virtualization for high performance
     * 10Gbps - 100Gbos
@@ -76,6 +80,7 @@
       * UserData
         * Provide code to run at launch to configure the instance (eg: Patches, Enroll to AD)
         * Not encrypted, avoid using passwords
+        * http://169.254.169.254/latest/user-data
     * VM Import/Export
       * Only available to previously imported instances
     * Instance Metadata

@@ -250,11 +250,6 @@
   * scan
     * Retrieve all table
     * Reads every item in a table or a secondary index
-* DAX
-  * DynamoDB Accelerator
-  * Fully managed in-memory cache
-  * 10x performance improvements
-  * Pay-per-request pricing
 * Backups
   * Full backups at any time with zere impact
   * Operates in the same region
@@ -272,3 +267,4 @@
     * Sporadic workload
     * Pay money per read/write
     * Less cost-effective
+* Support Infrequent-Access Tables
