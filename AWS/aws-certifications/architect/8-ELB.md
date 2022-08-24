@@ -28,11 +28,14 @@
     * Each rule has priority, action(s), condition(s)
     * Every listener must have a default rule
     * Only supports HTTP/HTTPS
+    * Supports Server Name Indication (SNI) - multiple TLS
+    * Supports Dynamic Port Mapping
   * Network Load Balancer
     * Works at the transport layer (4)
     * Useful for high performance
     * Listener --> Target Group
     * Support any protocol/port
+    * Supports Dynamic Port Mapping
 * Scheme
   * Internet-Facing LB
     * DNS name as an entry point

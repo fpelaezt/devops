@@ -333,6 +333,7 @@
     * Use roles
     * Client SDK uses a SQLite to work offline
     * Cognito receive an OAuth or OpenID Connect token and return an CognitoID for the user
+    * Supports Guest users
   * Amazon Mobile Analytics
 * Applications
   * WorkSpaces

@@ -4,7 +4,7 @@
 * Up to 5 per Region
 * Specify a CIDR from /16 (65k hosts) to /28 (16 hosts)
 * Must specify CIDR and Region at creation
-* CIDR can't be changed later
+* CIDR can't be changed later but you can add an extra CIDR block (Up to 5)
 * Instance tenancy attribute will apply to all instances in the VPC
 * At creation: default CIDR /16, default subnet in every AZ, default SG and NACL, default route table to IGW
 * Wizard options: Single public, two private/public, two private/public and hardware VPN access
@@ -158,6 +158,7 @@
     * To use the following must be done
       * Configure a Route Table with the private subnet to direct Internet-bound traffic to the NAT
       * Allocate an EIP and associated with the NAT
+    * Do not support traffic between peered VPC's
 
 * Virtual Private Gateways (VPGs) / Customer Gateways (CGWs) / Virtual Private Networks (VPNs)
   * VPGs/CGWs allows connections of a corporate network to the VPC

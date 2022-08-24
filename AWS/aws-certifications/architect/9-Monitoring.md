@@ -19,6 +19,7 @@
   * Log Event --> Log Stream (event collection) --> Log Group (stream collection)
   * CloudWatch Logs Insights: Allows query using SQL-like
   * Near Real-time. For Real-Time use Kinesis
+  * Supports Access Logs and Execution Logs
 * Maximum 5000 alarms per AWS account, and metric are retained for 2 weeks by default
 * Commom Metrics
   * CPU Utilization: Default

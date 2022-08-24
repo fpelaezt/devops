@@ -41,6 +41,7 @@
   * WLM defines Queues and Concurrency
 * Redshift Spectrum
   * Allows read data from Glue without having a Redshift Database
+* Use Enhanced VPC routing to avoid traffic goes to internet
 
 ## Amazon Elastic MapReduce (EMR)
 
