@@ -92,6 +92,7 @@
   * S3 service is checked, not the specific bucket
   * Can use Cloud Watch metrics
   * Can use SNS notifications to alert about failed health checks
+  * Supports Endpoints or CloudWatch Alarms
 * Resiliency
   * Every AWS Region, with a Elastic Load Balancer with cross-zone and connection draining enabled
   * ELB health check requires "Evaluate Target Health"=true

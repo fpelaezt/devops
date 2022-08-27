@@ -9,7 +9,16 @@
   * Resources, CPU/RAM
   * Trigger
 * Maximum execution time 15min
-* Maximun 10G RAM
+* RAM 128MB- Up 10G RAM
+* Metrics
+  * Invocations
+  * Errors
+  * Dead Letter Errors
+  * Duration
+  * Throttles
+  * IteratorAge
+  * ConcurrentExecutions
+  * UnreservedConcurrentExecutions
 
 ## ECS
 

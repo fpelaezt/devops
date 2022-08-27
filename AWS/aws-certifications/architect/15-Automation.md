@@ -30,6 +30,7 @@
   * Use cases
     * Quickly launch new environments
     * Replicate configuration between environments (accross regions)
+* Support CloudFormation Drift Detection to detect changes outside the templates
 
 ## Elastic Beanstalk
 
@@ -43,6 +44,7 @@
 * Environment configuration
   * Collection of parameters and settings
   * After an update changes are applied automatically or a deletion and new deploy is created (depends on the type)
+  * For better security store credentials on S3 files
 * Environment Tier
   * web server tier: process web applications requests (HTTP)
   * worker tier: run background jobs
@@ -56,6 +58,9 @@
   * Type of traffic HTTP/S
   * Application server settings
   * Auto-Scaling settings
+* Supports
+  * SQS
+  * ASG
 
 ## System Manager
 

@@ -60,6 +60,7 @@
 * Access Control
   * IAM roles can be used but they are difficult to maintain
   * Better use SQS Access Control: Queue Policies in JSON format. Allows grant permision to others AWS accounts
+* DeleteMessageBatch for reducing costs
 * Commands
   * CreateQueue, ListQueues, DeleteQueue, SendMessage, SendMessageBatch, ReceiveMessage, DeleteMessage, DeleteMessageBatch, PurgeQueue
   * ChangeMessageVisibility, ChangeMessageVisibilityBatch, SetQueueAttributes, GetQueueAttributes, GetQueueUrl

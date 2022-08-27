@@ -75,3 +75,8 @@
   * Can set Time Interval, Wait Timeout and Threshold consecutive health check failures
 * Access Logs
   * Supports access logs to S3
+* Monitoring
+  * CloudWatch
+  * Access Logs
+  * Request Tracing
+  * CloudTrail Logs

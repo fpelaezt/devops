@@ -298,6 +298,7 @@
   * File Server
   * Run SMB (Windows Server Message Block)
   * Support AD users, security policies, Distributed File System (DFS)
+  * Support Single-AZ or Multi-AZ with SDD/HDD storage
 * FSx for Lustre
   * Optimized for compute-intense
 

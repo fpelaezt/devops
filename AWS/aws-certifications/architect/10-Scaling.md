@@ -70,4 +70,6 @@
   * Scaling Storage
   * Read Replicas
   * Aurora Serverless
-* DynamoDB
+* Lifecycle hooks
+  * Allow to run scripts before/after instance is working/terminated
+

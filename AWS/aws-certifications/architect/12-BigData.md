@@ -42,6 +42,7 @@
 * Redshift Spectrum
   * Allows read data from Glue without having a Redshift Database
 * Use Enhanced VPC routing to avoid traffic goes to internet
+* Supports Cross-Region snapshots
 
 ## Amazon Elastic MapReduce (EMR)
 
@@ -117,6 +118,7 @@
 * Allows serverless ETL workloads
 * Alternative to EMR
 * Structure S3 data (schema)
+* Use Crawler to populate Data Catalogs with tables
 
 ## Amazon QuickSight
 
