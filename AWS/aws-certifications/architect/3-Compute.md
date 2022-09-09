@@ -196,6 +196,7 @@
     * gp2 - General-Purpose SSD
       * Suitable for transactional, small blocks, Small/Medium databases, DEV/TEST environments, Boot
       * Size 1GB - 16TB
+      * IOPS Baseline 100IOPS for sizes lower than 33GiB
       * IOPS 3 per GiB, up to 16k
       * Throughput 128MiB/s - 250MiB/s depending on the volume size
       * If size is smaller than 1TB can burst to 3k IOPS
@@ -205,15 +206,15 @@
       * Suitable for High Performance at low cost
       * Size 1GB - 16TB
       * IOPS 3k Predictable. Up to 16k IOPS for additional cost
-      * Throughput 125MiB/s regardless the volume size. Up to 1000MiB/s for additional cost
+      * Throughput 125MiB/s Predictable. Up to 1000MiB/s for additional cost
       * 4x faster than max throughput of gp2
     * io1/io2 - Provisioned IOPS SSD
-      * Suitable for larga databases workloads, IOPS intensive application
+      * Suitable for large databases workloads, IOPS intensive application
       * Size 4GB to 16TB
       * Types
         * io1: IOPS up to 64k (50 IOPS per GiB)
         * io2: IOPS up to 64k (500 IOPS per GiB)
-      * Throughput 320MB/s
+      * Throughput 320MiB/s - 1000MiB/s
       * Can stripe multiple values together in RAID
       * Billed based on provisioning space and IOPS
       * Ratio IOPS/size = 50. A volume with 5k IOPS at least 100GB
@@ -222,7 +223,7 @@
       * Suitable for frequently access, large blocks, big data, warehouses, ETL, Log processing, no boot
       * Up to 16TB
       * IOPS 500
-      * Throughput 40MB/s per TB. Burst up to 250MB/s. Max 500 MB/s per volume
+      * Throughput 40MB/s per TB. Burst up to 250MB/s. Max500 MB/s per volume
     * sc1 - Cold HDD
       * Suitable for infrequently access, no boot
       * Size up to 16TB
