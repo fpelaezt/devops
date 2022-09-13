@@ -36,6 +36,10 @@
     * Listener --> Target Group
     * Support any protocol/port
     * Supports Dynamic Port Mapping
+  * Gateway Load Balancer
+    * Balance third party virtual appliances
+    * Virtual firewalls (forninet, cisco, paloalto, juniper)
+    * IDS/IPS CheckPoint, Trend Micro
 * Scheme
   * Internet-Facing LB
     * DNS name as an entry point
@@ -80,3 +84,12 @@
   * Access Logs
   * Request Tracing
   * CloudTrail Logs
+* Errors
+  * 5xx Server-Side Error
+    * 504 Gateway Timeout: Backend didn't respond on-time
+    * 502 Bad Gateway: Target host is unreachable (routing issue)
+    * 503 Service Unavailable: Targets aren't registered
+  * 4xx Client-Side Error
+    * 400 Bad Request: Malformed request
+    * 408 Request Timeout: Client didn't sent data bofore idle timeout
+    * 464: Incoming request protocol incompatible
