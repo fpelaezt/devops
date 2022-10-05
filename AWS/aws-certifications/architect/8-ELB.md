@@ -81,6 +81,7 @@
   * Supports access logs to S3
 * Monitoring
   * CloudWatch
+    * HealthyHostCount / UnHealthyHostCount, RequestCount, TargetResponseTime, HTTP Status Codes
   * Access Logs
   * Request Tracing
   * CloudTrail Logs

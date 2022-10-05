@@ -308,3 +308,15 @@
 * Supports EC2, EBS, EFS, FSx, Storage Gateway, RDS, DynamoDB
 * Centralized way to handle backup across an Organization
 * Automation backup / schedules
+
+## EC2 Image Builder
+
+* Automate process of creating / maintaining AMI's
+* Image Pipeline: Defines configuration
+* Image Recipe
+* Build Components
+* Process
+  * Select OS Image
+  * Customize Software
+  * Test
+  * Distribute

@@ -288,7 +288,7 @@
   - Network stacks
   - App stacks
 - Concepts
-  - StackSets: to work with multiple AWS accounts
+  - StackSets: Allows CF stacks across multiple AWS Accounts
   - ChangeSets: Update stack
   - Nested Stacks: separation of concern
 - To update Re-upload the new version
@@ -296,12 +296,13 @@
   - Manual: Edit using CloudFormation Designer or by console
   - Automatic: Edit YAML file and CLI
 - Blocks
-  - Resources (Mandatory)
+  - Metadata
   - Parameters: dynamic inputs (Up to 60)
   - Mappings: static variables
-  - Outputs (Up to 60)
+  - Resources (Mandatory)
+  - Transform
   - Conditionals
-  - Metadata
+  - Outputs (Up to 60)
 - Helpers
   - References
   - Functions
@@ -348,6 +349,8 @@
 - Rollback
   - Default: everything rolls back (gets deleted). Can be disabled
   - If stack update fails, it rolls back to the previous state. Can be disabled
+- Stack Policy
+  - Specify an Stack Policy for critical resources to avoid deletion of resources using CF
 - [FAQ](https://aws.amazon.com/cloudformation/faqs/)
 
 ## Monitoring

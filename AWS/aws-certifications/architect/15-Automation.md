@@ -69,7 +69,7 @@
 * Tools
   * Automation Documents (Runbooks)
   * Run Command (scripts)
-  * Path Manager
+  * Patch Manager
   * Parameter Store
   * Hybrid Activations (control on-premises resources)
   * Session Manager (Remotely connect)
